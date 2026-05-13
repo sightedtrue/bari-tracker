@@ -112,6 +112,34 @@
 
   .progress.slim { height: 5px; }
 
+  /* Celebration confetti */
+  .confetti-layer {
+    position: fixed; inset: 0; pointer-events: none; z-index: 100; overflow: hidden;
+  }
+  .confetti {
+    position: absolute; width: 10px; height: 14px; top: -20px;
+    animation: fall linear forwards;
+    will-change: transform, opacity;
+  }
+  @keyframes fall {
+    0%   { transform: translate3d(0,-20px,0) rotate(0deg); opacity: 1; }
+    100% { transform: translate3d(var(--dx),105vh,0) rotate(720deg); opacity: .9; }
+  }
+  .celebrate-banner {
+    position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(.5);
+    background: var(--grad); color: #fff; padding: 18px 28px; border-radius: 18px;
+    font-size: 18px; font-weight: 600; letter-spacing: -.01em;
+    box-shadow: 0 10px 40px rgba(59,130,246,.5);
+    z-index: 101; opacity: 0;
+    animation: pop .6s cubic-bezier(.34,1.56,.64,1) forwards, fadeOut .4s 1.6s ease forwards;
+    text-align: center; max-width: 80%;
+  }
+  @keyframes pop {
+    0% { opacity:0; transform: translate(-50%,-50%) scale(.3); }
+    100% { opacity:1; transform: translate(-50%,-50%) scale(1); }
+  }
+  @keyframes fadeOut { to { opacity: 0; transform: translate(-50%,-60%) scale(.95); } }
+
   /* Streak chips */
   .streaks { display:grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
   .streak-chip {
@@ -936,6 +964,72 @@ $('themeBtn').onclick = () => {
   save(); applyTheme();
 };
 
+/* ---------- Celebration ---------- */
+const CELEBRATE_COLORS = ['#f472b6','#fbbf24','#22d3ee','#a78bfa','#34d399','#60a5fa','#fb923c'];
+function celebrate(message, big=false) {
+  // Banner
+  const banner = document.createElement('div');
+  banner.className = 'celebrate-banner';
+  banner.textContent = message;
+  document.body.appendChild(banner);
+  setTimeout(()=> banner.remove(), 2400);
+
+  // Confetti
+  const layer = document.createElement('div');
+  layer.className = 'confetti-layer';
+  document.body.appendChild(layer);
+  const count = big ? 120 : 60;
+  for (let i=0; i<count; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    const left = Math.random() * 100;
+    const dx = (Math.random() - 0.5) * 200;     // horizontal drift in px
+    const dur = 1.6 + Math.random() * 1.8;       // 1.6–3.4s
+    const delay = Math.random() * 0.4;
+    const color = CELEBRATE_COLORS[Math.floor(Math.random()*CELEBRATE_COLORS.length)];
+    const size = 6 + Math.random() * 8;
+    c.style.left = left + 'vw';
+    c.style.background = color;
+    c.style.width = size + 'px';
+    c.style.height = (size * 1.4) + 'px';
+    c.style.borderRadius = Math.random() > .5 ? '2px' : '50%';
+    c.style.setProperty('--dx', dx + 'px');
+    c.style.animationDuration = dur + 's';
+    c.style.animationDelay = delay + 's';
+    layer.appendChild(c);
+  }
+  setTimeout(()=> layer.remove(), 4000);
+}
+function checkCelebrations(prevTotals, newTotals) {
+  const s = state.settings;
+  const day = ensureDay();
+  day.celebrated = day.celebrated || {};
+
+  const hitProtein = newTotals.p >= s.proteinMin && (!prevTotals || prevTotals.p < s.proteinMin);
+  const hitWater   = newTotals.water >= s.waterTarget && (!prevTotals || prevTotals.water < s.waterTarget);
+  const hitCal     = newTotals.kcal >= s.calMin && (!prevTotals || prevTotals.kcal < s.calMin);
+
+  const allGoals = newTotals.p >= s.proteinMin && newTotals.water >= s.waterTarget && newTotals.kcal >= s.calMin;
+
+  if (hitProtein && !day.celebrated.protein) {
+    day.celebrated.protein = true; save();
+    celebrate('Protein goal hit!');
+  }
+  if (hitWater && !day.celebrated.water) {
+    day.celebrated.water = true; save();
+    celebrate('Hydration target reached');
+  }
+  if (hitCal && !day.celebrated.cal) {
+    day.celebrated.cal = true; save();
+    celebrate('Calorie target reached');
+  }
+  if (allGoals && !day.celebrated.all) {
+    day.celebrated.all = true; save();
+    setTimeout(()=> celebrate('All daily goals complete!', true), 800);
+  }
+}
+let _lastTotals = null;
+
 /* ---------- Dashboard render ---------- */
 function totalsForDay(day) {
   let kcal=0, p=0, c=0, f=0, fi=0;
@@ -1003,6 +1097,10 @@ function renderDashboard() {
   }
 
   renderStreaks();
+
+  // Celebration check (fires once per day per target)
+  checkCelebrations(_lastTotals, t);
+  _lastTotals = t;
 }
 
 /* ---------- Food modal ---------- */

@@ -1,4 +1,4 @@
-const CACHE = 'bari-tracker-v1';
+const CACHE = 'bari-tracker-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -18,14 +18,31 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
+// Network-first for HTML/JS so updates appear immediately, cache fallback for offline.
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
-  e.respondWith(
-    caches.match(req).then(hit => hit || fetch(req).then(res => {
-      const copy = res.clone();
-      caches.open(CACHE).then(c => c.put(req, copy)).catch(()=>{});
-      return res;
-    }).catch(() => caches.match('./index.html')))
-  );
+
+  const url = new URL(req.url);
+  const isHTML = req.mode === 'navigate' ||
+                 req.headers.get('accept')?.includes('text/html') ||
+                 url.pathname.endsWith('.html');
+
+  if (isHTML) {
+    e.respondWith(
+      fetch(req).then(res => {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(req, copy)).catch(()=>{});
+        return res;
+      }).catch(() => caches.match(req).then(m => m || caches.match('./index.html')))
+    );
+  } else {
+    e.respondWith(
+      caches.match(req).then(hit => hit || fetch(req).then(res => {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(req, copy)).catch(()=>{});
+        return res;
+      }).catch(() => caches.match('./index.html')))
+    );
+  }
 });
