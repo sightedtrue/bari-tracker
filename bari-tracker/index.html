@@ -25,18 +25,29 @@
     --radius: 14px;
   }
   [data-theme="dark"] {
-    --bg: #050505;
-    --surface: #0f0f10;
-    --surface-2: #18181b;
-    --text: #fafafa;
-    --text-dim: #a1a1aa;
-    --border: #232326;
-    --primary: #22c55e;
-    --primary-2: #4ade80;
-    --good: #22c55e;
+    --bg: #0a0e1a;
+    --surface: #131826;
+    --surface-2: #1b2236;
+    --text: #f1f5fb;
+    --text-dim: #8b95ad;
+    --border: #232b40;
+    --primary: #3b82f6;
+    --primary-2: #06b6d4;
+    --grad: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
+    --good: #10b981;
     --warn: #f59e0b;
-    --bad:  #ef4444;
-    --shadow: none;
+    --bad:  #f43f5e;
+    --shadow: 0 4px 20px rgba(59,130,246,.12);
+
+    /* Accent palette for icons & rings */
+    --c-protein: #f472b6;   /* pink */
+    --c-cal:     #f59e0b;   /* amber */
+    --c-water:   #06b6d4;   /* cyan */
+    --c-meds:    #a78bfa;   /* violet */
+    --c-journal: #34d399;   /* emerald */
+    --c-history: #60a5fa;   /* blue */
+    --c-settings:#94a3b8;   /* slate */
+    --c-streak:  #fb923c;   /* orange flame */
   }
 
   * { box-sizing: border-box; }
@@ -100,6 +111,32 @@
   .quick.ghost { background: transparent; color: var(--text-dim); }
 
   .progress.slim { height: 5px; }
+
+  /* Streak chips */
+  .streaks { display:grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
+  .streak-chip {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px; display:flex; align-items:center; gap:10px;
+  }
+  .streak-chip svg { width: 22px; height: 22px; flex:0 0 22px; }
+  .streak-n { font-size: 18px; font-weight: 700; line-height: 1.1; letter-spacing:-.02em; }
+  .streak-l { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing:.04em; }
+
+  /* Per-color quick buttons */
+  .quick.water:hover { border-color: var(--c-water); color: var(--c-water); }
+
+  /* Mood/check-in chips */
+  .chip {
+    background: var(--surface-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 8px 14px; font-size: 14px; cursor: pointer;
+    transition: all .15s ease;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .chip svg { width: 16px; height: 16px; }
+  .chip:hover { border-color: var(--primary); }
+  .chip:active { transform: scale(.95); }
+  .chip.on { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 4px 14px rgba(59,130,246,.3); }
   .row { display:flex; align-items:center; gap:10px; }
   .row.between { justify-content: space-between; }
   .stack { display:flex; flex-direction:column; gap:10px; }
@@ -117,7 +154,8 @@
   }
   .btn:hover { border-color: var(--primary); }
   .btn:active { transform: scale(.97); }
-  .btn.primary { background:var(--primary); color:#fff; border-color:var(--primary); }
+  .btn.primary { background: var(--grad); color:#fff; border:none; box-shadow: 0 4px 14px rgba(59,130,246,.35); }
+  .btn.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(59,130,246,.45); }
   .btn.ghost { background: transparent; }
   .btn.danger { background: var(--bad); color:#fff; border-color: var(--bad); }
   .btn.full { width: 100%; }
@@ -130,11 +168,12 @@
   }
   .progress > div {
     height:100%; background: linear-gradient(90deg,var(--primary), var(--primary-2));
-    width: 0%; transition: width .5s ease;
+    width: 0%; transition: width .6s cubic-bezier(.4,0,.2,1);
+    border-radius: 999px;
   }
-  .progress.good > div { background: linear-gradient(90deg, #16a34a, #22c55e); }
-  .progress.warn > div { background: linear-gradient(90deg, #d97706, #f59e0b); }
-  .progress.bad  > div { background: linear-gradient(90deg, #b91c1c, #ef4444); }
+  .progress.protein > div { background: linear-gradient(90deg,#ec4899,#f472b6); }
+  .progress.cal     > div { background: linear-gradient(90deg,#d97706,#fbbf24); }
+  .progress.water   > div { background: linear-gradient(90deg,#0891b2,#22d3ee); }
 
   .metric { display:flex; flex-direction:column; gap:6px; }
   .metric .top { display:flex; justify-content:space-between; align-items:baseline; }
@@ -176,14 +215,24 @@
 
   /* big floating action button */
   .fab {
-    position: fixed; right: 18px; bottom: calc(72px + env(safe-area-inset-bottom));
-    width: 56px; height: 56px; border-radius: 50%;
-    background: var(--primary); color: #061a0c; border: none;
+    position: fixed; right: 18px; bottom: calc(78px + env(safe-area-inset-bottom));
+    width: 60px; height: 60px; border-radius: 50%;
+    background: var(--grad); color: #fff; border: none;
     display:flex; align-items:center; justify-content:center;
-    box-shadow: 0 8px 24px rgba(34,197,94,.35); cursor:pointer; z-index: 35;
+    box-shadow: 0 10px 28px rgba(59,130,246,.45), 0 4px 10px rgba(6,182,212,.3);
+    cursor:pointer; z-index: 35;
+    transition: transform .15s ease, box-shadow .2s ease;
   }
-  .fab svg { width: 24px; height: 24px; }
-  .fab:active { transform: scale(.95); }
+  .fab svg { width: 26px; height: 26px; }
+  .fab:hover { transform: scale(1.05); }
+  .fab:active { transform: scale(.92); }
+
+  /* Per-tab accent colors when active */
+  nav.tabs button[data-tab="dashboard"].active { color: var(--c-cal); }
+  nav.tabs button[data-tab="meds"].active      { color: var(--c-meds); }
+  nav.tabs button[data-tab="history"].active   { color: var(--c-history); }
+  nav.tabs button[data-tab="settings"].active  { color: var(--c-settings); }
+  nav.tabs button.active { background: linear-gradient(180deg, transparent, rgba(59,130,246,.06)); }
 
   /* modal */
   .modal-bg {
@@ -211,6 +260,7 @@
   }
   .check.on { background: var(--good); border-color: var(--good); color:#fff; }
   .check.on::after { content: "✓"; font-weight:700; }
+  .check.med.on { background: linear-gradient(135deg,#7c3aed,#a78bfa); border-color: transparent; box-shadow: 0 4px 14px rgba(167,139,250,.35); }
 
   /* schedule */
   .timeline { position:relative; padding-left: 18px; }
@@ -281,39 +331,58 @@
   <!-- ============ DASHBOARD ============ -->
   <section id="view-dashboard">
 
-    <!-- Hero: 3 ring-style stats -->
+    <!-- Streak chips -->
+    <div class="streaks">
+      <div class="streak-chip" id="chipProteinStreak">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="color:var(--c-streak)"><path d="M13 2c0 4-3 5-3 9a3 3 0 1 0 6 0c0-1-1-2-1-3 2 1 4 3 4 7a7 7 0 0 1-14 0c0-5 5-7 8-13z"/></svg>
+        <div><div class="streak-n" id="proteinStreakN">0</div><div class="streak-l">protein</div></div>
+      </div>
+      <div class="streak-chip" id="chipMedsStreak">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="color:var(--c-meds)"><polyline points="20 6 9 17 4 12"/></svg>
+        <div><div class="streak-n" id="medsStreakN">0</div><div class="streak-l">meds</div></div>
+      </div>
+      <div class="streak-chip" id="chipQuitStreak">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="color:var(--c-journal)"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm-2 14.5L5.5 12l1.4-1.4 3.1 3.1 6.6-6.6 1.4 1.4z"/></svg>
+        <div><div class="streak-n" id="quitStreakN">0</div><div class="streak-l">smoke-free</div></div>
+      </div>
+    </div>
+
+    <!-- Hero: 3 colorful stats -->
     <div class="card hero">
       <div class="rings">
-        <div class="ring-stat" id="ringProtein">
-          <div class="ring-num"><span id="proteinNow">0</span><small>/<span id="proteinTarget">80</span>g</small></div>
+        <div class="ring-stat">
+          <div class="ring-num" style="color:var(--c-protein)"><span id="proteinNow">0</span><small>/<span id="proteinTarget">80</span>g</small></div>
           <div class="ring-label">Protein</div>
         </div>
-        <div class="ring-stat" id="ringCal">
-          <div class="ring-num"><span id="calNow">0</span><small>/<span id="calTarget">1800</span></small></div>
+        <div class="ring-stat">
+          <div class="ring-num" style="color:var(--c-cal)"><span id="calNow">0</span><small>/<span id="calTarget">1800</span></small></div>
           <div class="ring-label">Calories</div>
         </div>
-        <div class="ring-stat" id="ringWater">
-          <div class="ring-num"><span id="waterNow">0</span><small>/<span id="waterTarget">2500</span>ml</small></div>
+        <div class="ring-stat">
+          <div class="ring-num" style="color:var(--c-water)"><span id="waterNow">0</span><small>/<span id="waterTarget">2500</span>ml</small></div>
           <div class="ring-label">Water</div>
         </div>
       </div>
       <div class="ring-bars">
-        <div class="progress slim" id="proteinBar"><div></div></div>
-        <div class="progress slim" id="calBar"><div></div></div>
-        <div class="progress slim" id="waterBar"><div></div></div>
+        <div class="progress slim protein" id="proteinBar"><div></div></div>
+        <div class="progress slim cal" id="calBar"><div></div></div>
+        <div class="progress slim water" id="waterBar"><div></div></div>
       </div>
     </div>
 
     <!-- Quick water -->
     <div class="card tight">
       <div class="row between" style="margin-bottom:8px">
-        <span class="section-title">Water</span>
-        <span class="small" id="waterReminder">Sip between meals</span>
+        <span class="section-title" style="color:var(--c-water); display:inline-flex; align-items:center; gap:6px">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px"><path d="M12 2.5c-3 4-7 8-7 12a7 7 0 0 0 14 0c0-4-4-8-7-12z"/></svg>
+          Water
+        </span>
+        <span class="small">Sip between meals</span>
       </div>
       <div class="quick-row">
-        <button class="quick" onclick="addWater(250)">+250</button>
-        <button class="quick" onclick="addWater(500)">+500</button>
-        <button class="quick" onclick="addWater(750)">+750</button>
+        <button class="quick water" onclick="addWater(250)">+250</button>
+        <button class="quick water" onclick="addWater(500)">+500</button>
+        <button class="quick water" onclick="addWater(750)">+750</button>
         <button class="quick ghost" onclick="openWaterModal()">Custom</button>
       </div>
     </div>
@@ -321,138 +390,145 @@
     <!-- Today's meals -->
     <div class="card tight">
       <div class="row between" style="margin-bottom:8px">
-        <span class="section-title">Today's meals</span>
+        <span class="section-title" style="color:var(--c-cal)">Today's meals</span>
         <span class="small" id="mealsCount">0 entries</span>
       </div>
       <div id="mealsList"></div>
     </div>
 
+    <!-- Quick check-in (replaces journal tab) -->
+    <div class="card tight">
+      <div class="row between" style="margin-bottom:10px">
+        <span class="section-title" style="color:var(--c-journal)">Quick check-in</span>
+        <span class="small" id="checkinSaved"></span>
+      </div>
+      <div class="row" style="gap:10px; align-items:center; margin-bottom:10px">
+        <span class="small" style="min-width:60px">Energy</span>
+        <input type="range" min="1" max="10" value="5" id="energy" style="flex:1" />
+        <span class="ring-num" style="font-size:18px; min-width:28px; text-align:right" id="energyVal">5</span>
+      </div>
+      <div class="row" style="gap:8px; flex-wrap:wrap">
+        <button class="chip" data-feel="great" onclick="quickFeel('great', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          Great
+        </button>
+        <button class="chip" data-feel="ok" onclick="quickFeel('ok', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          OK
+        </button>
+        <button class="chip" data-feel="rough" onclick="quickFeel('rough', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          Rough
+        </button>
+        <button class="chip" data-feel="pain" onclick="quickFeel('pain', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Pain
+        </button>
+        <button class="chip" data-smoke="yes" onclick="logSmoke(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="14" width="18" height="4" rx="1"/><path d="M18 8c2 0 2 2 2 4M22 14V8"/></svg>
+          Smoked
+        </button>
+      </div>
+      <details style="margin-top:10px">
+        <summary class="small">More details (notes, BM, etc)</summary>
+        <div style="margin-top:10px">
+          <label>Stomach burning</label>
+          <select id="burning"><option value="no">No</option><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select>
+          <label style="margin-top:8px">Bowel movement</label>
+          <div class="grid2">
+            <select id="bmYN"><option value="no">No</option><option value="yes">Yes</option></select>
+            <select id="bristol"><option value="">— Bristol —</option><option value="1">1 Hard lumps</option><option value="2">2 Lumpy</option><option value="3">3 Cracked</option><option value="4">4 Smooth (ideal)</option><option value="5">5 Soft blobs</option><option value="6">6 Mushy</option><option value="7">7 Liquid</option></select>
+          </div>
+          <label style="margin-top:8px">Notes</label>
+          <textarea id="notes" placeholder="Anything to remember…"></textarea>
+        </div>
+      </details>
+      <button class="btn primary full" style="margin-top:10px" onclick="saveJournal()">Save check-in</button>
+    </div>
+
     <!-- Macro details, collapsed -->
     <details class="card tight">
-      <summary class="section-title">Macros & meds shortcut</summary>
+      <summary class="section-title">More macros</summary>
       <div class="grid3" style="margin-top:10px">
         <div class="metric"><span class="t">Carbs</span><span class="v"><span id="carbsNow">0</span><small> g</small></span></div>
         <div class="metric"><span class="t">Fat</span><span class="v"><span id="fatNow">0</span><small> g</small></span></div>
         <div class="metric"><span class="t">Fiber</span><span class="v"><span id="fiberNow">0</span><small> g</small></span></div>
       </div>
-      <button class="btn full" style="margin-top:10px" onclick="switchTab('meds')">Open meds checklist</button>
     </details>
 
   </section>
 
   <!-- ============ MEDS ============ -->
   <section id="view-meds" class="hidden">
-    <div class="card">
-      <h2>Today’s meds & supplements</h2>
+
+    <!-- Meds progress hero -->
+    <div class="card hero" style="background: linear-gradient(135deg, rgba(167,139,250,.12), rgba(96,165,250,.08));">
+      <div class="row between" style="margin-bottom:8px">
+        <span class="section-title" style="color:var(--c-meds); display:inline-flex; align-items:center; gap:6px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="9" width="20" height="6" rx="3"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
+          Today's meds
+        </span>
+        <span class="ring-num" style="color:var(--c-meds); font-size:18px"><span id="medsTakenN">0</span><small>/<span id="medsTotalN">6</small></span></span>
+      </div>
+      <div class="progress slim" id="medsProgressBar" style="--bar:var(--c-meds)"><div style="background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div></div>
+    </div>
+
+    <div class="card tight">
       <div id="medsList"></div>
-      <div class="small" style="margin-top:8px">Resets automatically at midnight.</div>
+      <div class="small" style="margin-top:8px; text-align:center">Resets automatically at midnight</div>
     </div>
 
-    <div class="card">
-      <h2>Daily schedule</h2>
-      <div class="timeline" id="schedule"></div>
-    </div>
-  </section>
-
-  <!-- ============ JOURNAL ============ -->
-  <section id="view-journal" class="hidden">
-    <div class="card">
-      <h2>How are you today?</h2>
-      <label>Energy level: <span id="energyVal">5</span>/10</label>
-      <input type="range" min="1" max="10" value="5" id="energy" />
-
-      <label style="margin-top:10px">Stomach burning</label>
-      <select id="burning">
-        <option value="no">No</option>
-        <option value="mild">Mild</option>
-        <option value="moderate">Moderate</option>
-        <option value="severe">Severe</option>
-      </select>
-
-      <label style="margin-top:10px">Abdominal pain?</label>
-      <div class="grid2">
-        <select id="painYN">
-          <option value="no">No</option>
-          <option value="yes">Yes</option>
-        </select>
-        <select id="painLoc">
-          <option value="">— location —</option>
-          <option>Upper abdomen</option>
-          <option>Lower abdomen</option>
-          <option>Right side</option>
-          <option>Left side</option>
-          <option>Around navel</option>
-          <option>Diffuse</option>
-        </select>
-      </div>
-
-      <label style="margin-top:10px">Bowel movement?</label>
-      <div class="grid2">
-        <select id="bmYN">
-          <option value="no">No</option>
-          <option value="yes">Yes</option>
-        </select>
-        <select id="bristol">
-          <option value="">— Bristol —</option>
-          <option value="1">1 — Hard lumps</option>
-          <option value="2">2 — Sausage, lumpy</option>
-          <option value="3">3 — Sausage, cracked</option>
-          <option value="4">4 — Smooth, soft (ideal)</option>
-          <option value="5">5 — Soft blobs</option>
-          <option value="6">6 — Mushy</option>
-          <option value="7">7 — Liquid</option>
-        </select>
-      </div>
-
-      <label style="margin-top:10px">Blood in stool?</label>
-      <select id="blood">
-        <option value="no">No</option>
-        <option value="yes">Yes</option>
-      </select>
-
-      <label style="margin-top:10px">Smoked / vaped today?</label>
-      <select id="smoke">
-        <option value="no">No</option>
-        <option value="yes">Yes</option>
-      </select>
-      <div class="small" style="margin-top:6px">Quit streak: <strong id="quitStreak">0</strong> days</div>
-
-      <label style="margin-top:10px">Notes</label>
-      <textarea id="notes" placeholder="Anything to remember today…"></textarea>
-
-      <button class="btn primary full" style="margin-top:12px" onclick="saveJournal()">Save journal</button>
+    <div class="card tight">
+      <span class="section-title" style="color:var(--c-history); display:inline-flex; align-items:center; gap:6px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Daily schedule
+      </span>
+      <div class="timeline" id="schedule" style="margin-top:10px"></div>
     </div>
   </section>
+
 
   <!-- ============ HISTORY ============ -->
   <section id="view-history" class="hidden">
-    <div class="card">
-      <div class="row between">
-        <h2 style="margin:0" id="calMonthTitle">Month</h2>
-        <div class="row">
+    <div class="card tight">
+      <div class="row between" style="margin-bottom:10px">
+        <span class="section-title" style="color:var(--c-history); display:inline-flex; align-items:center; gap:6px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+          <span id="calMonthTitle">Month</span>
+        </span>
+        <div class="row" style="gap:6px">
           <button class="btn sm" onclick="calMove(-1)">‹</button>
           <button class="btn sm" onclick="calMove(1)">›</button>
         </div>
       </div>
       <div class="cal" id="calendar"></div>
-      <div class="small" style="margin-top:8px">Tap a day to see details.</div>
+      <div class="small" style="margin-top:8px; text-align:center">Tap a day to see details</div>
     </div>
 
-    <div class="card">
-      <h2>Weekly summary</h2>
-      <div id="weekSummary" class="small"></div>
+    <div class="card tight">
+      <span class="section-title" style="color:var(--c-cal); display:inline-flex; align-items:center; gap:6px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/></svg>
+        Weekly summary
+      </span>
+      <div id="weekSummary" class="small" style="margin-top:10px"></div>
     </div>
 
-    <div class="card">
-      <h2>Last 30 days</h2>
-      <canvas id="trendsChart"></canvas>
+    <div class="card tight">
+      <span class="section-title" style="color:var(--c-protein); display:inline-flex; align-items:center; gap:6px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Last 30 days
+      </span>
+      <canvas id="trendsChart" style="margin-top:10px"></canvas>
     </div>
   </section>
 
   <!-- ============ SETTINGS ============ -->
   <section id="view-settings" class="hidden">
-    <div class="card">
-      <h2>Targets & schedule</h2>
+    <div class="card tight">
+      <span class="section-title" style="color:var(--c-cal); display:inline-flex; align-items:center; gap:6px; margin-bottom:10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Targets & schedule
+      </span>
       <label>Wake-up time</label>
       <input type="time" id="setWake" />
 
@@ -468,14 +544,20 @@
       <button class="btn primary full" style="margin-top:10px" onclick="saveSettings()">Save settings</button>
     </div>
 
-    <div class="card">
-      <h2>Medications & supplements</h2>
+    <div class="card tight">
+      <span class="section-title" style="color:var(--c-meds); display:inline-flex; align-items:center; gap:6px; margin-bottom:10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="9" width="20" height="6" rx="3"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
+        Medications & supplements
+      </span>
       <div id="medsTemplate"></div>
       <button class="btn full" style="margin-top:8px" onclick="addMedTemplate()">+ Add medication</button>
     </div>
 
-    <div class="card">
-      <h2>Data</h2>
+    <div class="card tight">
+      <span class="section-title" style="color:var(--c-history); display:inline-flex; align-items:center; gap:6px; margin-bottom:10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Data
+      </span>
       <div class="grid2">
         <button class="btn" onclick="exportData()">Export JSON</button>
         <button class="btn" onclick="document.getElementById('importFile').click()">Import JSON</button>
@@ -500,22 +582,18 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </button>
 
-<!-- Bottom nav -->
+<!-- Bottom nav (4 tabs - journal folded into dashboard) -->
 <nav class="tabs">
   <button data-tab="dashboard" class="active" onclick="switchTab('dashboard')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
     Today
   </button>
   <button data-tab="meds" onclick="switchTab('meds')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="20" height="6" rx="3"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
     Meds
   </button>
-  <button data-tab="journal" onclick="switchTab('journal')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-    Journal
-  </button>
   <button data-tab="history" onclick="switchTab('history')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
     History
   </button>
   <button data-tab="settings" onclick="switchTab('settings')">
@@ -610,7 +688,7 @@
 <!-- ============ Onboarding ============ -->
 <div class="modal-bg" id="onboardBg">
   <div class="modal">
-    <h3>Welcome, Lele 👋</h3>
+    <h3>Welcome, Lele</h3>
     <p class="small">Bari Tracker is a private daily log for your post-bypass routine. Everything stays on this device.</p>
     <ul class="small">
       <li><strong>Today</strong> — log foods & water, see your protein, calories, water progress.</li>
@@ -783,16 +861,66 @@ function toast(msg) {
   clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 1600);
 }
 function switchTab(name) {
-  ['dashboard','meds','journal','history','settings'].forEach(n=>{
-    $('view-'+n).classList.toggle('hidden', n!==name);
+  ['dashboard','meds','history','settings'].forEach(n=>{
+    const el = $('view-'+n);
+    if (el) el.classList.toggle('hidden', n!==name);
   });
   document.querySelectorAll('nav.tabs button').forEach(b=>{
     b.classList.toggle('active', b.dataset.tab===name);
   });
   if (name==='history') { renderCalendar(); renderWeekSummary(); renderTrends(); }
   if (name==='meds') { renderMeds(); renderSchedule(); }
-  if (name==='journal') { loadJournal(); }
+  if (name==='dashboard') { loadJournal(); renderStreaks(); }
   if (name==='settings') { loadSettingsForm(); renderMedsTemplate(); }
+}
+
+/* Quick check-in helpers */
+function quickFeel(feel, btn) {
+  document.querySelectorAll('.chip[data-feel]').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  ensureDay().journal = ensureDay().journal || {};
+  ensureDay().journal.feel = feel;
+  // map to old fields for history view
+  ensureDay().journal.painYN = (feel==='pain') ? 'yes' : 'no';
+  save();
+}
+function logSmoke(btn) {
+  btn.classList.toggle('on');
+  ensureDay().journal = ensureDay().journal || {};
+  ensureDay().journal.smoke = btn.classList.contains('on') ? 'yes' : 'no';
+  save();
+  renderStreaks();
+}
+
+/* Streaks */
+function renderStreaks() {
+  $('proteinStreakN').textContent = proteinStreak();
+  $('medsStreakN').textContent = medsStreak();
+  $('quitStreakN').textContent = quitStreak();
+}
+function proteinStreak() {
+  let s = 0; const d = new Date();
+  for (let i=0;i<3650;i++) {
+    const k = ymd(d);
+    const day = state.days[k];
+    if (!day) break;
+    const t = totalsForDay(day);
+    if (t.p < state.settings.proteinMin) break;
+    s++; d.setDate(d.getDate()-1);
+  }
+  return s;
+}
+function medsStreak() {
+  let s = 0; const d = new Date();
+  for (let i=0;i<3650;i++) {
+    const k = ymd(d);
+    const day = state.days[k];
+    if (!day) break;
+    const taken = Object.keys(day.meds||{}).length;
+    if (taken < state.meds.length) break;
+    s++; d.setDate(d.getDate()-1);
+  }
+  return s;
 }
 
 /* ---------- Theme ---------- */
@@ -873,6 +1001,8 @@ function renderDashboard() {
   if (day.foods.length===0) {
     list.innerHTML = '<div class="small" style="padding:14px 0; text-align:center">No foods yet today. Tap the + button.</div>';
   }
+
+  renderStreaks();
 }
 
 /* ---------- Food modal ---------- */
@@ -1023,13 +1153,22 @@ function renderMeds() {
     const taken = day.meds[med.id];
     const row = document.createElement('div'); row.className='checkbox-row';
     row.innerHTML = `
-      <div class="check ${taken?'on':''}" onclick="toggleMed('${med.id}', this)"></div>
+      <div class="check med ${taken?'on':''}" onclick="toggleMed('${med.id}', this)"></div>
       <div style="flex:1">
         <div><strong>${med.name}</strong></div>
         <div class="meta">${t} · ${med.note||''} ${taken?` · taken at ${taken}`:''}</div>
       </div>`;
     wrap.appendChild(row);
   });
+  // top progress
+  if ($('medsTakenN')) {
+    const taken = Object.keys(day.meds||{}).length;
+    const total = state.meds.length;
+    $('medsTakenN').textContent = taken;
+    $('medsTotalN').textContent = total;
+    const bar = $('medsProgressBar');
+    if (bar) bar.firstElementChild.style.width = Math.min(100, Math.round(100*taken/total)) + "%";
+  }
 }
 function toggleMed(id, el) {
   const day = ensureDay();
@@ -1059,33 +1198,36 @@ function loadJournal() {
   const j = day.journal || {};
   $('energy').value = j.energy ?? 5;
   $('energyVal').textContent = $('energy').value;
-  $('burning').value = j.burning || 'no';
-  $('painYN').value = j.painYN || 'no';
-  $('painLoc').value = j.painLoc || '';
-  $('bmYN').value = j.bmYN || 'no';
-  $('bristol').value = j.bristol || '';
-  $('blood').value = j.blood || 'no';
-  $('smoke').value = j.smoke || 'no';
-  $('notes').value = j.notes || '';
-  $('quitStreak').textContent = quitStreak();
+  if ($('burning')) $('burning').value = j.burning || 'no';
+  if ($('bmYN')) $('bmYN').value = j.bmYN || 'no';
+  if ($('bristol')) $('bristol').value = j.bristol || '';
+  if ($('notes')) $('notes').value = j.notes || '';
+  document.querySelectorAll('.chip[data-feel]').forEach(c=>{
+    c.classList.toggle('on', c.dataset.feel === j.feel);
+  });
+  document.querySelectorAll('.chip[data-smoke]').forEach(c=>{
+    c.classList.toggle('on', j.smoke === 'yes');
+  });
 }
-$('energy').addEventListener('input', e=> $('energyVal').textContent = e.target.value);
+document.addEventListener('input', e=>{
+  if (e.target && e.target.id === 'energy') $('energyVal').textContent = e.target.value;
+});
 function saveJournal() {
   const day = ensureDay();
+  const prev = day.journal || {};
   day.journal = {
+    ...prev,
     energy: parseInt($('energy').value,10),
-    burning: $('burning').value,
-    painYN: $('painYN').value,
-    painLoc: $('painLoc').value,
-    bmYN: $('bmYN').value,
-    bristol: $('bristol').value,
-    blood: $('blood').value,
-    smoke: $('smoke').value,
-    notes: $('notes').value,
+    burning: $('burning') ? $('burning').value : prev.burning || 'no',
+    bmYN: $('bmYN') ? $('bmYN').value : prev.bmYN || 'no',
+    bristol: $('bristol') ? $('bristol').value : prev.bristol || '',
+    notes: $('notes') ? $('notes').value : prev.notes || '',
   };
   save();
-  $('quitStreak').textContent = quitStreak();
-  toast("Journal saved");
+  $('checkinSaved').textContent = "saved ✓";
+  setTimeout(()=>{ if ($('checkinSaved')) $('checkinSaved').textContent = ''; }, 2000);
+  renderStreaks();
+  toast("Check-in saved");
 }
 function quitStreak() {
   // count days back from today where smoke != 'yes'
@@ -1196,17 +1338,25 @@ function renderTrends() {
   }
   if (trendsChart) trendsChart.destroy();
   const ctx = $('trendsChart').getContext('2d');
+  const css = getComputedStyle(document.body);
   trendsChart = new Chart(ctx, {
     type: 'line',
     data: { labels, datasets: [
-      { label:'Protein (g)', data: pArr, tension: .3, spanGaps: true },
-      { label:'Calories',    data: kArr, tension: .3, spanGaps: true, yAxisID: 'y1' },
-      { label:'Water (ml)',  data: wArr, tension: .3, spanGaps: true, yAxisID: 'y1' },
+      { label:'Protein (g)', data: pArr, tension: .3, spanGaps: true,
+        borderColor:'#f472b6', backgroundColor:'rgba(244,114,182,.15)', pointBackgroundColor:'#f472b6' },
+      { label:'Calories',    data: kArr, tension: .3, spanGaps: true, yAxisID: 'y1',
+        borderColor:'#fbbf24', backgroundColor:'rgba(251,191,36,.15)', pointBackgroundColor:'#fbbf24' },
+      { label:'Water (ml)',  data: wArr, tension: .3, spanGaps: true, yAxisID: 'y1',
+        borderColor:'#22d3ee', backgroundColor:'rgba(34,211,238,.15)', pointBackgroundColor:'#22d3ee' },
     ]},
     options: {
       responsive:true, maintainAspectRatio:false,
-      scales: { y: { position:'left' }, y1: { position:'right', grid:{drawOnChartArea:false} } },
-      plugins: { legend: { labels: { color: getComputedStyle(document.body).color } } }
+      scales: {
+        y:  { position:'left',  ticks:{color:css.color}, grid:{color:'rgba(148,163,184,.08)'} },
+        y1: { position:'right', ticks:{color:css.color}, grid:{drawOnChartArea:false} },
+        x:  { ticks:{color:css.color}, grid:{color:'rgba(148,163,184,.08)'} }
+      },
+      plugins: { legend: { labels: { color: css.color } } }
     }
   });
 }
@@ -1330,6 +1480,7 @@ function init() {
   applyTheme();
   setHeaderDate();
   renderDashboard();
+  loadJournal();
   if (!state.onboarded) $('onboardBg').classList.add('show');
 }
 init();
