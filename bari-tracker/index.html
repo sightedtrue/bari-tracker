@@ -165,6 +165,50 @@
   .chip:hover { border-color: var(--primary); }
   .chip:active { transform: scale(.95); }
   .chip.on { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 4px 14px rgba(59,130,246,.3); }
+
+  /* Food modal — clean list */
+  .search-wrap { position: relative; }
+  .search-wrap .search-ico {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    width: 18px; height: 18px; color: var(--text-dim); pointer-events: none;
+  }
+  .search-wrap input { padding-left: 38px; }
+
+  .food-list { margin-top: 12px; max-height: 55vh; overflow: auto; }
+  .food-section-head {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text-dim); padding: 10px 4px 6px; font-weight: 600;
+  }
+  .food-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px; border-radius: 12px; cursor: pointer;
+    transition: background .15s ease;
+  }
+  .food-row:hover { background: var(--surface-2); }
+  .food-row .nm { font-weight: 500; font-size: 15px; }
+  .food-row .mac { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+  .food-row .mac .pp { color: var(--c-protein); font-weight: 500; }
+  .food-row .add-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--grad); color: #fff; border: none; flex: 0 0 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 4px 10px rgba(59,130,246,.3);
+  }
+  .food-row .add-btn svg { width: 16px; height: 16px; }
+  .food-row.expanded { background: var(--surface-2); }
+  .food-row-expand {
+    padding: 0 12px 14px; background: var(--surface-2);
+    border-radius: 0 0 12px 12px; margin-bottom: 4px;
+    animation: expandIn .2s ease;
+  }
+  @keyframes expandIn { from { opacity:0; transform: translateY(-4px);} to {opacity:1; transform:none;} }
+  .food-row-expand .grid3 { gap: 8px; }
+  .food-row-expand .preview {
+    font-size: 12px; color: var(--text-dim); padding: 8px 0;
+    text-align: center;
+  }
+
+  .custom-form { padding-top: 4px; }
   .row { display:flex; align-items:center; gap:10px; }
   .row.between { justify-content: space-between; }
   .stack { display:flex; flex-direction:column; gap:10px; }
@@ -582,6 +626,20 @@
     </div>
 
     <div class="card tight">
+      <span class="section-title" style="color:var(--c-protein); display:inline-flex; align-items:center; gap:6px; margin-bottom:10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        AI photo scan
+      </span>
+      <label style="margin-top:6px">Claude API key</label>
+      <input type="password" id="setApiKey" placeholder="sk-ant-..." autocomplete="off" />
+      <div class="small" style="margin-top:6px">
+        Stored only on this device. Each scan costs ~$0.005 with Claude Haiku 4.5.
+        <a href="https://console.anthropic.com" target="_blank" style="color:var(--primary)">Get a key</a>
+      </div>
+      <button class="btn full" style="margin-top:8px" onclick="saveApiKey()">Save key</button>
+    </div>
+
+    <div class="card tight">
       <span class="section-title" style="color:var(--c-history); display:inline-flex; align-items:center; gap:6px; margin-bottom:10px">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Data
@@ -633,45 +691,32 @@
 <!-- ============ Food modal ============ -->
 <div class="modal-bg" id="foodModalBg">
   <div class="modal">
-    <div class="row between">
-      <h3>Add food</h3>
-      <button class="btn ghost sm" onclick="closeModal('foodModalBg')">✕</button>
+    <div class="row between" style="margin-bottom:14px">
+      <h3 style="margin:0">Add food</h3>
+      <button class="icon-btn" onclick="closeModal('foodModalBg')" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
 
-    <label>Search</label>
-    <input id="foodSearch" placeholder="Type a food (e.g. chicken)" oninput="renderFoodList()" />
-
-    <div class="quick-foods" id="quickFoods" style="margin-top:8px"></div>
-
-    <div id="foodPickList" style="margin-top:8px; max-height: 220px; overflow:auto; border:1px solid var(--border); border-radius:10px;"></div>
-
-    <div class="card" style="margin-top:12px; box-shadow:none">
-      <h3 id="selectedFoodName">No food selected</h3>
-      <div class="grid2">
-        <div><label>Amount</label><input type="number" id="foodAmount" value="100" min="0" step="1" /></div>
-        <div><label>Unit</label>
-          <select id="foodUnit">
-            <option value="g">grams</option>
-            <option value="unit">unit (per 100g equiv.)</option>
-          </select>
-        </div>
-      </div>
-      <div class="grid2">
-        <div><label>Meal</label>
-          <select id="foodMeal">
-            <option>breakfast</option><option>snack</option><option>lunch</option>
-            <option>snack 2</option><option>dinner</option>
-          </select>
-        </div>
-        <div><label>Time</label><input type="time" id="foodTime" /></div>
-      </div>
-      <div class="small" id="foodPreview"></div>
-      <button class="btn primary full" style="margin-top:10px" onclick="addFoodEntry()">Add to log</button>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-ico"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="foodSearch" placeholder="Search foods…" oninput="renderFoodList()" />
+      <button class="cam-btn" onclick="document.getElementById('foodPhoto').click()" aria-label="Scan food photo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </button>
+      <input type="file" id="foodPhoto" accept="image/*" capture="environment" class="hidden" onchange="scanFoodImage(event)" />
     </div>
 
-    <details style="margin-top:10px">
-      <summary>Custom food (manual macros)</summary>
-      <div class="grid2">
+    <div id="scanStatus" class="scan-status hidden"></div>
+
+    <div id="foodPickList" class="food-list"></div>
+
+    <div class="row" style="gap:8px; margin-top:10px">
+      <button class="btn ghost full" onclick="toggleCustom()">+ Custom food</button>
+    </div>
+
+    <div id="customFoodForm" class="custom-form hidden">
+      <div class="grid2" style="margin-top:10px">
         <div><label>Name</label><input id="cName" /></div>
         <div><label>Per amount (g)</label><input id="cAmount" type="number" value="100" /></div>
       </div>
@@ -684,8 +729,8 @@
         <div><label>Fat</label><input id="cF" type="number" /></div>
         <div><label>Fiber</label><input id="cFi" type="number" /></div>
       </div>
-      <button class="btn full" style="margin-top:8px" onclick="addCustomFood()">Add custom entry</button>
-    </details>
+      <button class="btn primary full" style="margin-top:8px" onclick="addCustomFood()">Save & pick</button>
+    </div>
   </div>
 </div>
 
@@ -810,8 +855,8 @@ const DEFAULT_SETTINGS = {
   proteinMin: 60,
   proteinMax: 80,
   waterTarget: 2500,
-  calMin: 1500,
-  calMax: 1800,
+  calMin: 1600,
+  calMax: 1900,
   theme: 'dark', // default to dark; user can toggle
 };
 
@@ -1104,86 +1149,152 @@ function renderDashboard() {
 }
 
 /* ---------- Food modal ---------- */
-let selectedFood = null;
+const POPULAR = ["Egg, boiled","Greek yogurt, plain","Chicken breast","Whey protein shake","Cottage cheese","Salmon","Avocado","Tuna (canned, water)"];
+let expandedFood = null;
+
 function openFoodModal() {
-  selectedFood = null;
-  $('selectedFoodName').textContent = "No food selected";
-  $('foodPreview').textContent = "";
   $('foodSearch').value = "";
-  $('foodAmount').value = 100;
-  const now = new Date();
-  $('foodTime').value = `${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
-  renderQuickFoods();
+  $('customFoodForm').classList.add('hidden');
+  expandedFood = null;
   renderFoodList();
   $('foodModalBg').classList.add('show');
-}
-function renderQuickFoods() {
-  const popular = ["Egg, boiled","Greek yogurt, plain","Chicken breast","Whey protein shake","Cottage cheese","Salmon","Avocado"];
-  const wrap = $('quickFoods'); wrap.innerHTML='';
-  popular.forEach(n=>{
-    const b = document.createElement('span');
-    b.className='qf'; b.textContent=n;
-    b.onclick=()=>pickFood(n);
-    wrap.appendChild(b);
-  });
+  setTimeout(()=> $('foodSearch').focus(), 200);
 }
 function allFoods() {
   return [...FOOD_DB, ...state.customFoods];
 }
+function recentFoodNames(limit=5) {
+  // Most recently logged unique foods across all days
+  const seen = new Set(); const out = [];
+  const days = Object.keys(state.days).sort().reverse();
+  for (const k of days) {
+    const foods = state.days[k].foods || [];
+    for (let i = foods.length - 1; i >= 0; i--) {
+      const n = foods[i].name;
+      if (!seen.has(n) && allFoods().some(f=>f.n===n)) {
+        seen.add(n); out.push(n);
+        if (out.length >= limit) return out;
+      }
+    }
+  }
+  return out;
+}
+function nowHHMM() {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+}
+function suggestMeal() {
+  // Suggest meal slot based on time
+  const h = new Date().getHours();
+  if (h < 12) return 'breakfast';
+  if (h < 14) return 'lunch';
+  if (h < 17) return 'snack';
+  if (h < 20) return 'dinner';
+  return 'snack 2';
+}
 function renderFoodList() {
   const q = $('foodSearch').value.trim().toLowerCase();
   const out = $('foodPickList'); out.innerHTML='';
-  const list = allFoods()
-    .filter(f=>f.n.toLowerCase().includes(q))
-    .slice(0,40);
-  list.forEach(f=>{
-    const r = document.createElement('div');
-    r.className='food-item'; r.style.padding='8px 10px';
-    r.innerHTML = `<div>
-        <div class="nm">${f.n}</div>
-        <div class="mac">per 100g · ${f.kcal} kcal · P ${f.p} · C ${f.c} · F ${f.f}</div>
+
+  if (q === '') {
+    // Idle state: show Recent + Suggested + All
+    const recent = recentFoodNames();
+    if (recent.length) {
+      const head = document.createElement('div'); head.className='food-section-head'; head.textContent='Recent';
+      out.appendChild(head);
+      recent.forEach(n => out.appendChild(buildFoodRow(allFoods().find(f=>f.n===n))));
+    }
+    const head2 = document.createElement('div'); head2.className='food-section-head';
+    head2.textContent = recent.length ? 'Suggested' : 'Suggested';
+    out.appendChild(head2);
+    POPULAR.filter(n => !recent.includes(n))
+      .map(n => allFoods().find(f=>f.n===n)).filter(Boolean)
+      .forEach(f => out.appendChild(buildFoodRow(f)));
+  } else {
+    const list = allFoods().filter(f=>f.n.toLowerCase().includes(q)).slice(0,40);
+    if (list.length === 0) {
+      out.innerHTML='<div class="small" style="padding:20px; text-align:center">No matches. Try “+ Custom food” below.</div>';
+      return;
+    }
+    list.forEach(f => out.appendChild(buildFoodRow(f)));
+  }
+}
+function buildFoodRow(f) {
+  if (!f) return document.createTextNode('');
+  const wrap = document.createElement('div');
+  const r = document.createElement('div');
+  r.className = 'food-row' + (expandedFood === f.n ? ' expanded' : '');
+  r.innerHTML = `
+    <div style="flex:1; min-width:0">
+      <div class="nm">${f.n}</div>
+      <div class="mac">100g · ${f.kcal} kcal · <span class="pp">P ${f.p}g</span> · C ${f.c} · F ${f.f}</div>
+    </div>
+    <button class="add-btn" aria-label="Add">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>`;
+  r.onclick = () => toggleFoodExpand(f.n);
+  wrap.appendChild(r);
+
+  if (expandedFood === f.n) {
+    const exp = document.createElement('div');
+    exp.className = 'food-row-expand';
+    exp.onclick = e => e.stopPropagation();
+    exp.innerHTML = `
+      <div class="grid3" style="margin-top:8px">
+        <div><label>Amount (g)</label><input type="number" id="rowAmount" value="100" min="1" step="1" /></div>
+        <div><label>Meal</label>
+          <select id="rowMeal">
+            <option ${suggestMeal()==='breakfast'?'selected':''}>breakfast</option>
+            <option ${suggestMeal()==='snack'?'selected':''}>snack</option>
+            <option ${suggestMeal()==='lunch'?'selected':''}>lunch</option>
+            <option>snack 2</option>
+            <option ${suggestMeal()==='dinner'?'selected':''}>dinner</option>
+          </select>
+        </div>
+        <div><label>Time</label><input type="time" id="rowTime" value="${nowHHMM()}" /></div>
       </div>
-      <button class="btn sm primary">Pick</button>`;
-    r.querySelector('button').onclick = ()=>pickFood(f.n);
-    out.appendChild(r);
-  });
-  if (list.length===0) out.innerHTML='<div class="small" style="padding:10px">No matches.</div>';
+      <div class="preview" id="rowPreview"></div>
+      <button class="btn primary full" onclick="addFoodEntry('${f.n.replace(/'/g,"\\'")}')">Add to log</button>`;
+    wrap.appendChild(exp);
+    setTimeout(()=>{
+      const upd = ()=> {
+        const amt = parseFloat($('rowAmount').value)||0;
+        const k = amt/100;
+        $('rowPreview').innerHTML =
+          `<strong>${Math.round(f.kcal*k)}</strong> kcal · <span style="color:var(--c-protein)"><strong>P ${(f.p*k).toFixed(1)}g</strong></span> · C ${(f.c*k).toFixed(1)} · F ${(f.f*k).toFixed(1)}`;
+      };
+      $('rowAmount').oninput = upd; upd();
+    }, 0);
+  }
+  return wrap;
 }
-function pickFood(name) {
-  const f = allFoods().find(x=>x.n===name);
-  if (!f) return;
-  selectedFood = f;
-  $('selectedFoodName').textContent = f.n;
-  updateFoodPreview();
-  $('foodAmount').oninput = updateFoodPreview;
+function toggleFoodExpand(name) {
+  expandedFood = expandedFood === name ? null : name;
+  renderFoodList();
 }
-function updateFoodPreview() {
-  if (!selectedFood) return;
-  const amt = parseFloat($('foodAmount').value)||0;
-  const k = amt/100;
-  $('foodPreview').textContent =
-    `${Math.round(selectedFood.kcal*k)} kcal · P ${(selectedFood.p*k).toFixed(1)} · C ${(selectedFood.c*k).toFixed(1)} · F ${(selectedFood.f*k).toFixed(1)} · Fi ${(selectedFood.fi*k).toFixed(1)}`;
-}
-function addFoodEntry() {
-  if (!selectedFood) { toast("Pick a food first"); return; }
-  const amt = parseFloat($('foodAmount').value)||0;
-  if (amt<=0) { toast("Amount?"); return; }
+function addFoodEntry(name) {
+  const f = allFoods().find(x=>x.n===name); if (!f) return;
+  const amt = parseFloat($('rowAmount').value)||0;
+  if (amt<=0) { toast("Enter an amount"); return; }
   const k = amt/100;
   const day = ensureDay();
   const entry = {
     id: 'f'+Date.now()+Math.floor(Math.random()*999),
-    name: selectedFood.n, amount: amt,
-    meal: $('foodMeal').value, time: $('foodTime').value || "12:00",
-    kcal: selectedFood.kcal*k, p: selectedFood.p*k, c: selectedFood.c*k,
-    f: selectedFood.f*k, fi: selectedFood.fi*k,
+    name: f.n, amount: amt,
+    meal: $('rowMeal').value, time: $('rowTime').value || nowHHMM(),
+    kcal: f.kcal*k, p: f.p*k, c: f.c*k, f: f.f*k, fi: f.fi*k,
   };
   day.foods.push(entry);
-  save(); renderDashboard(); closeModal('foodModalBg'); toast("Added");
+  save(); renderDashboard(); closeModal('foodModalBg'); toast("Added " + f.n);
+}
+function toggleCustom() {
+  const el = $('customFoodForm');
+  el.classList.toggle('hidden');
 }
 function addCustomFood() {
   const name = $('cName').value.trim();
   const amt = parseFloat($('cAmount').value)||100;
-  if (!name) { toast("Name?"); return; }
+  if (!name) { toast("Enter a name"); return; }
   const factor = 100/amt;
   const food = {
     n: name,
@@ -1195,10 +1306,12 @@ function addCustomFood() {
   };
   state.customFoods.push(food);
   save();
-  pickFood(name);
-  $('foodAmount').value = amt;
-  toast("Custom food saved");
+  $('customFoodForm').classList.add('hidden');
+  $('cName').value = $('cKcal').value = $('cP').value = $('cC').value = $('cF').value = $('cFi').value = '';
+  $('foodSearch').value = name;
+  expandedFood = name;
   renderFoodList();
+  toast("Saved – set amount and add");
 }
 function editFood(id) {
   const day = ensureDay();
