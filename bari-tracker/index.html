@@ -172,7 +172,29 @@
     position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
     width: 18px; height: 18px; color: var(--text-dim); pointer-events: none;
   }
-  .search-wrap input { padding-left: 38px; }
+  .search-wrap input { padding-left: 38px; padding-right: 48px; }
+  .cam-btn {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    width: 36px; height: 36px; border-radius: 9px;
+    background: var(--grad); color: #fff; border: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px rgba(59,130,246,.35);
+  }
+  .cam-btn svg { width: 18px; height: 18px; }
+  .cam-btn:active { transform: translateY(-50%) scale(.93); }
+
+  .scan-status {
+    margin-top: 10px; padding: 12px; border-radius: 12px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; font-size: 14px;
+  }
+  .scan-status.error { border-color: var(--bad); color: var(--bad); }
+  .spinner {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--border); border-top-color: var(--primary);
+    animation: spin .7s linear infinite; flex: 0 0 18px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   .food-list { margin-top: 12px; max-height: 55vh; overflow: auto; }
   .food-section-head {
@@ -1156,6 +1178,7 @@ function openFoodModal() {
   $('foodSearch').value = "";
   $('customFoodForm').classList.add('hidden');
   expandedFood = null;
+  setScanStatus('');
   renderFoodList();
   $('foodModalBg').classList.add('show');
   setTimeout(()=> $('foodSearch').focus(), 200);
@@ -1290,6 +1313,136 @@ function addFoodEntry(name) {
 function toggleCustom() {
   const el = $('customFoodForm');
   el.classList.toggle('hidden');
+}
+
+/* ---------- AI photo scan ---------- */
+function saveApiKey() {
+  const v = $('setApiKey').value.trim();
+  state.settings.anthropicKey = v;
+  save();
+  toast(v ? "API key saved" : "API key cleared");
+}
+function setScanStatus(msg, isError=false, loading=false) {
+  const el = $('scanStatus');
+  if (!msg) { el.classList.add('hidden'); el.innerHTML=''; return; }
+  el.classList.remove('hidden');
+  el.classList.toggle('error', isError);
+  el.innerHTML = (loading ? '<div class="spinner"></div>' : '') + `<div>${msg}</div>`;
+}
+async function fileToResizedBase64(file, maxDim=1024) {
+  // Resize on a canvas to keep upload small (cheaper, faster)
+  const img = await new Promise((res, rej) => {
+    const i = new Image();
+    i.onload = () => res(i);
+    i.onerror = rej;
+    i.src = URL.createObjectURL(file);
+  });
+  const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+  const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  return dataUrl.split(',')[1]; // strip "data:image/jpeg;base64,"
+}
+async function scanFoodImage(ev) {
+  const file = ev.target.files[0];
+  ev.target.value = ''; // allow re-pick of same file
+  if (!file) return;
+  const key = state.settings.anthropicKey;
+  if (!key) {
+    setScanStatus('Add your Claude API key in Settings first.', true);
+    return;
+  }
+  setScanStatus('Analyzing photo…', false, true);
+
+  let base64;
+  try { base64 = await fileToResizedBase64(file); }
+  catch (e) { setScanStatus('Could not read image.', true); return; }
+
+  const prompt = `You are a nutrition expert. Analyze this food photo. Respond with ONLY a JSON object, no markdown, no prose.
+
+Format:
+{
+  "name": "concise food name",
+  "estimated_grams": 150,
+  "per_100g": { "kcal": 165, "p": 31, "c": 0, "f": 3.6, "fi": 0 },
+  "confidence": "high|medium|low"
+}
+
+Rules:
+- For mixed plates, name the dominant component (e.g. "Grilled chicken with rice and vegetables") and estimate combined macros per 100g of the visible meal.
+- Estimate visible portion in grams using plate, hand, or utensil cues.
+- Macros are PER 100g of the food, not for the whole portion.
+- "p" = protein, "c" = carbs, "f" = fat, "fi" = fiber. All in grams. "kcal" = calories.
+- If you cannot identify food, return: {"error": "<short reason>"}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5',
+        max_tokens: 400,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64 } },
+            { type: 'text', text: prompt }
+          ]
+        }]
+      })
+    });
+    if (!res.ok) {
+      const t = await res.text();
+      setScanStatus(`API error (${res.status}). Check your key & billing.`, true);
+      console.error(t);
+      return;
+    }
+    const data = await res.json();
+    let text = data.content?.[0]?.text || '';
+    // Strip code fences if model added any
+    text = text.replace(/^```(?:json)?\s*|\s*```$/g, '').trim();
+    let parsed;
+    try { parsed = JSON.parse(text); }
+    catch { setScanStatus('Could not parse response. Try a clearer photo.', true); return; }
+
+    if (parsed.error) {
+      setScanStatus(parsed.error, true);
+      return;
+    }
+
+    // Save as custom food, then expand it
+    const food = {
+      n: parsed.name,
+      kcal: +parsed.per_100g.kcal || 0,
+      p:    +parsed.per_100g.p || 0,
+      c:    +parsed.per_100g.c || 0,
+      f:    +parsed.per_100g.f || 0,
+      fi:   +parsed.per_100g.fi || 0,
+    };
+    state.customFoods.push(food);
+    save();
+    setScanStatus(`Identified: ${food.n} (${parsed.confidence || 'unknown'} confidence). Edit grams below if needed.`, false);
+    expandedFood = food.n;
+    $('foodSearch').value = food.n;
+    renderFoodList();
+    // Pre-fill the suggested grams from the AI estimate
+    setTimeout(()=> {
+      const amtEl = $('rowAmount');
+      if (amtEl && parsed.estimated_grams) {
+        amtEl.value = Math.round(parsed.estimated_grams);
+        amtEl.dispatchEvent(new Event('input'));
+      }
+    }, 50);
+  } catch (e) {
+    setScanStatus('Network error. Are you online?', true);
+  }
 }
 function addCustomFood() {
   const name = $('cName').value.trim();
@@ -1581,6 +1734,7 @@ function loadSettingsForm() {
   $('setWater').value = s.waterTarget;
   $('setCmin').value = s.calMin;
   $('setCmax').value = s.calMax;
+  if ($('setApiKey')) $('setApiKey').value = s.anthropicKey || '';
 }
 function saveSettings() {
   const s = state.settings;
