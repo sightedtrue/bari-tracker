@@ -172,16 +172,21 @@
     position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
     width: 18px; height: 18px; color: var(--text-dim); pointer-events: none;
   }
-  .search-wrap input { padding-left: 38px; padding-right: 48px; }
-  .cam-btn {
-    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
-    width: 36px; height: 36px; border-radius: 9px;
-    background: var(--grad); color: #fff; border: none; cursor: pointer;
-    display: inline-flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 10px rgba(59,130,246,.35);
+  .search-wrap input { padding-left: 38px; }
+
+  /* AI scan box */
+  .scan-box {
+    margin-top: 12px; padding: 14px;
+    border-radius: 14px; border: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(244,114,182,.08), rgba(59,130,246,.06));
   }
-  .cam-btn svg { width: 18px; height: 18px; }
-  .cam-btn:active { transform: translateY(-50%) scale(.93); }
+  .scan-box-head {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600; color: var(--c-protein);
+    margin-bottom: 10px;
+  }
+  .scan-box-head svg { width: 18px; height: 18px; }
+  .scan-box textarea { min-height: 58px; margin-bottom: 8px; }
 
   .scan-status {
     margin-top: 10px; padding: 12px; border-radius: 12px;
@@ -413,11 +418,8 @@
 <header class="appbar">
   <div style="flex:1">
     <div class="sub" id="todayLabel"></div>
-    <h1>Hi, Lele</h1>
+    <h1 id="pageTitle">Hi, Lele</h1>
   </div>
-  <button class="icon-btn" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-  </button>
 </header>
 
 <main>
@@ -655,7 +657,7 @@
       <label style="margin-top:6px">Claude API key</label>
       <input type="password" id="setApiKey" placeholder="sk-ant-..." autocomplete="off" />
       <div class="small" style="margin-top:6px">
-        Stored only on this device. Each scan costs ~$0.005 with Claude Haiku 4.5.
+        Stored only on this device. Each scan costs ~$0.012 with Claude Sonnet 4.5 (~$2/mo at 5 scans/day).
         <a href="https://console.anthropic.com" target="_blank" style="color:var(--primary)">Get a key</a>
       </div>
       <button class="btn full" style="margin-top:8px" onclick="saveApiKey()">Save key</button>
@@ -723,10 +725,20 @@
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-ico"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input id="foodSearch" placeholder="Search foods…" oninput="renderFoodList()" />
-      <button class="cam-btn" onclick="document.getElementById('foodPhoto').click()" aria-label="Scan food photo">
+    </div>
+
+    <!-- AI photo scan box -->
+    <div class="scan-box">
+      <div class="scan-box-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Scan a meal with a photo
+      </div>
+      <textarea id="scanHint" placeholder="Describe it so the AI gets it right — e.g. &quot;4 scrambled eggs with cheddar cheese, cooked in butter&quot;"></textarea>
+      <button class="btn primary full" onclick="document.getElementById('foodPhoto').click()">
+        Take / choose photo
       </button>
       <input type="file" id="foodPhoto" accept="image/*" capture="environment" class="hidden" onchange="scanFoodImage(event)" />
+      <div class="small" style="margin-top:6px; text-align:center">A description helps a lot — list ingredients & how many.</div>
     </div>
 
     <div id="scanStatus" class="scan-status hidden"></div>
@@ -955,6 +967,12 @@ function toast(msg) {
   const t = $('toast'); t.textContent = msg; t.classList.add('show');
   clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'), 1600);
 }
+const TAB_TITLES = {
+  dashboard: 'Hi, Lele',
+  meds: 'Meds & schedule',
+  history: 'History',
+  settings: 'Settings',
+};
 function switchTab(name) {
   ['dashboard','meds','history','settings'].forEach(n=>{
     const el = $('view-'+n);
@@ -963,6 +981,11 @@ function switchTab(name) {
   document.querySelectorAll('nav.tabs button').forEach(b=>{
     b.classList.toggle('active', b.dataset.tab===name);
   });
+  $('pageTitle').textContent = TAB_TITLES[name] || 'Bari Tracker';
+  $('todayLabel').textContent = (name === 'dashboard')
+    ? new Date().toLocaleDateString(undefined,{ weekday:'long', month:'short', day:'numeric'})
+    : '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   if (name==='history') { renderCalendar(); renderWeekSummary(); renderTrends(); }
   if (name==='meds') { renderMeds(); renderSchedule(); }
   if (name==='dashboard') { loadJournal(); renderStreaks(); }
@@ -1018,18 +1041,10 @@ function medsStreak() {
   return s;
 }
 
-/* ---------- Theme ---------- */
+/* ---------- Theme (always dark) ---------- */
 function applyTheme() {
-  const pref = state.settings.theme;
-  const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const dark = pref ? pref==='dark' : sysDark;
-  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', 'dark');
 }
-$('themeBtn').onclick = () => {
-  const cur = document.documentElement.getAttribute('data-theme');
-  state.settings.theme = cur==='dark' ? 'light' : 'dark';
-  save(); applyTheme();
-};
 
 /* ---------- Celebration ---------- */
 const CELEBRATE_COLORS = ['#f472b6','#fbbf24','#22d3ee','#a78bfa','#34d399','#60a5fa','#fb923c'];
@@ -1176,12 +1191,12 @@ let expandedFood = null;
 
 function openFoodModal() {
   $('foodSearch').value = "";
+  $('scanHint').value = "";
   $('customFoodForm').classList.add('hidden');
   expandedFood = null;
   setScanStatus('');
   renderFoodList();
   $('foodModalBg').classList.add('show');
-  setTimeout(()=> $('foodSearch').focus(), 200);
 }
 function allFoods() {
   return [...FOOD_DB, ...state.customFoods];
@@ -1360,7 +1375,12 @@ async function scanFoodImage(ev) {
   try { base64 = await fileToResizedBase64(file); }
   catch (e) { setScanStatus('Could not read image.', true); return; }
 
-  const prompt = `You are a nutrition expert. Analyze this food photo. Respond with ONLY a JSON object, no markdown, no prose.
+  const hint = ($('scanHint').value || '').trim();
+  const hintBlock = hint
+    ? `\n\nThe person ate this and described it as: "${hint}"\nTrust this description for identity, ingredients, and quantity — the photo may not show everything (e.g. hidden cheese, oil, number of items). Use the photo mainly to estimate portion size and confirm.`
+    : '';
+
+  const prompt = `You are a nutrition expert. Analyze this meal. Respond with ONLY a JSON object, no markdown, no prose.
 
 Format:
 {
@@ -1371,11 +1391,12 @@ Format:
 }
 
 Rules:
-- For mixed plates, name the dominant component (e.g. "Grilled chicken with rice and vegetables") and estimate combined macros per 100g of the visible meal.
-- Estimate visible portion in grams using plate, hand, or utensil cues.
-- Macros are PER 100g of the food, not for the whole portion.
-- "p" = protein, "c" = carbs, "f" = fat, "fi" = fiber. All in grams. "kcal" = calories.
-- If you cannot identify food, return: {"error": "<short reason>"}`;
+- For mixed plates / multi-component meals (e.g. steak with parmigiana di melanzane), name all major components and estimate combined macros per 100g of the whole meal.
+- Account for cooking fats, sauces, cheese, and breading even if not clearly visible — use the description when given.
+- Estimate the TOTAL visible portion in grams using plate, hand, or utensil size cues. For multiple items (e.g. "4 eggs"), sum them.
+- Macros are PER 100g of the food, not for the whole portion. "p" = protein, "c" = carbs, "f" = fat, "fi" = fiber, all grams; "kcal" = calories.
+- Set confidence "high" only when the description or image makes identity and portion clear.
+- If you truly cannot identify any food, return: {"error": "<short reason>"}${hintBlock}`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -1387,8 +1408,8 @@ Rules:
         'content-type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5',
-        max_tokens: 400,
+        model: 'claude-sonnet-4-5',
+        max_tokens: 500,
         messages: [{
           role: 'user',
           content: [
