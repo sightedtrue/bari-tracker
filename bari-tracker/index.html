@@ -25,29 +25,29 @@
     --radius: 14px;
   }
   [data-theme="dark"] {
-    --bg: #0a0e1a;
-    --surface: #131826;
-    --surface-2: #1b2236;
-    --text: #f1f5fb;
-    --text-dim: #8b95ad;
-    --border: #232b40;
-    --primary: #3b82f6;
-    --primary-2: #06b6d4;
-    --grad: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
-    --good: #10b981;
-    --warn: #f59e0b;
-    --bad:  #f43f5e;
-    --shadow: 0 4px 20px rgba(59,130,246,.12);
+    --bg: #000000;
+    --surface: #070b14;
+    --surface-2: #0e1525;
+    --text: #e8eef7;
+    --text-dim: #6b7689;
+    --border: #161e30;
+    --primary: #2563eb;
+    --primary-2: #1d4ed8;
+    --grad: linear-gradient(135deg, #172554 0%, #1e40af 55%, #1d4ed8 100%);
+    --good: #0ea968;
+    --warn: #d97706;
+    --bad:  #e11d48;
+    --shadow: 0 4px 20px rgba(0,0,0,.5);
 
-    /* Accent palette for icons & rings */
-    --c-protein: #f472b6;   /* pink */
-    --c-cal:     #f59e0b;   /* amber */
-    --c-water:   #06b6d4;   /* cyan */
-    --c-meds:    #a78bfa;   /* violet */
-    --c-journal: #34d399;   /* emerald */
-    --c-history: #60a5fa;   /* blue */
-    --c-settings:#94a3b8;   /* slate */
-    --c-streak:  #fb923c;   /* orange flame */
+    /* Accent palette — darker blue-leaning tones */
+    --c-protein: #818cf8;   /* indigo */
+    --c-cal:     #38bdf8;   /* sky blue */
+    --c-water:   #22d3ee;   /* cyan */
+    --c-meds:    #6366f1;   /* deep indigo */
+    --c-journal: #2dd4bf;   /* teal */
+    --c-history: #3b82f6;   /* blue */
+    --c-settings:#64748b;   /* slate */
+    --c-streak:  #60a5fa;   /* light blue */
   }
 
   * { box-sizing: border-box; }
@@ -270,9 +270,9 @@
     width: 0%; transition: width .6s cubic-bezier(.4,0,.2,1);
     border-radius: 999px;
   }
-  .progress.protein > div { background: linear-gradient(90deg,#ec4899,#f472b6); }
-  .progress.cal     > div { background: linear-gradient(90deg,#d97706,#fbbf24); }
-  .progress.water   > div { background: linear-gradient(90deg,#0891b2,#22d3ee); }
+  .progress.protein > div { background: linear-gradient(90deg,#4338ca,#818cf8); }
+  .progress.cal     > div { background: linear-gradient(90deg,#0369a1,#38bdf8); }
+  .progress.water   > div { background: linear-gradient(90deg,#0e7490,#22d3ee); }
 
   .metric { display:flex; flex-direction:column; gap:6px; }
   .metric .top { display:flex; justify-content:space-between; align-items:baseline; }
@@ -341,16 +341,36 @@
   .modal-bg.show { display:flex; }
   .modal {
     background: var(--surface); width: 100%; max-width:720px;
-    border-radius: 18px 18px 0 0; padding: 16px; max-height: 90vh; overflow:auto;
+    border-radius: 18px 18px 0 0; padding: 0 16px 16px; max-height: 90vh; overflow:auto;
     border-top: 1px solid var(--border);
     animation: slideUp .25s ease;
   }
+  .modal-head {
+    position: sticky; top: 0; z-index: 5;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0 12px; margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-head h3 { margin: 0; }
   @keyframes slideUp { from { transform: translateY(20px); opacity:.6; } to { transform: translateY(0); opacity:1;} }
 
   .checkbox-row {
     display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);
   }
   .checkbox-row:last-child { border-bottom:none; }
+  .checkbox-row > div { min-width: 0; }   /* let flex children shrink instead of overflowing */
+
+  /* min–max range input row */
+  .range-row { display:flex; align-items:center; gap:8px; }
+  .range-row input { flex:1; min-width:0; }
+  .range-dash { color: var(--text-dim); font-size:13px; flex:0 0 auto; }
+
+  /* medication editor cards in Settings */
+  .med-edit {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px; margin-bottom: 10px;
+  }
   .checkbox-row .meta { color:var(--text-dim); font-size:12px;}
   .check {
     width:28px; height:28px; border-radius:8px; border:2px solid var(--border);
@@ -625,19 +645,27 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         Targets & schedule
       </span>
-      <label>Wake-up time</label>
+      <label style="margin-top:6px">Wake-up time</label>
       <input type="time" id="setWake" />
 
-      <div class="grid3" style="margin-top:8px">
-        <div><label>Protein min (g)</label><input type="number" id="setPmin" /></div>
-        <div><label>Protein max (g)</label><input type="number" id="setPmax" /></div>
-        <div><label>Water (ml)</label><input type="number" id="setWater" /></div>
+      <label style="margin-top:12px">Daily protein (grams)</label>
+      <div class="range-row">
+        <input type="number" id="setPmin" placeholder="min" />
+        <span class="range-dash">to</span>
+        <input type="number" id="setPmax" placeholder="max" />
       </div>
-      <div class="grid2" style="margin-top:8px">
-        <div><label>Cal min</label><input type="number" id="setCmin" /></div>
-        <div><label>Cal max</label><input type="number" id="setCmax" /></div>
+
+      <label style="margin-top:12px">Daily calories (kcal)</label>
+      <div class="range-row">
+        <input type="number" id="setCmin" placeholder="min" />
+        <span class="range-dash">to</span>
+        <input type="number" id="setCmax" placeholder="max" />
       </div>
-      <button class="btn primary full" style="margin-top:10px" onclick="saveSettings()">Save settings</button>
+
+      <label style="margin-top:12px">Daily water (ml)</label>
+      <input type="number" id="setWater" />
+
+      <button class="btn primary full" style="margin-top:14px" onclick="saveSettings()">Save settings</button>
     </div>
 
     <div class="card tight">
@@ -715,14 +743,14 @@
 <!-- ============ Food modal ============ -->
 <div class="modal-bg" id="foodModalBg">
   <div class="modal">
-    <div class="row between" style="margin-bottom:14px">
-      <h3 style="margin:0">Add food</h3>
+    <div class="modal-head">
+      <h3>Add food</h3>
       <button class="icon-btn" onclick="closeModal('foodModalBg')" aria-label="Close">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
 
-    <div class="search-wrap">
+    <div class="search-wrap" style="margin-top:12px">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-ico"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input id="foodSearch" placeholder="Search foods…" oninput="renderFoodList()" />
     </div>
@@ -733,15 +761,21 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         Scan a meal with a photo
       </div>
-      <textarea id="scanHint" placeholder="Describe it so the AI gets it right — e.g. &quot;4 scrambled eggs with cheddar cheese, cooked in butter&quot;"></textarea>
       <button class="btn primary full" onclick="document.getElementById('foodPhoto').click()">
         Take / choose photo
       </button>
       <input type="file" id="foodPhoto" accept="image/*" capture="environment" class="hidden" onchange="scanFoodImage(event)" />
-      <div class="small" style="margin-top:6px; text-align:center">A description helps a lot — list ingredients & how many.</div>
+      <div class="small" style="margin-top:6px; text-align:center">Just snap your plate — you can add a description after if it gets it wrong.</div>
     </div>
 
     <div id="scanStatus" class="scan-status hidden"></div>
+
+    <!-- Post-scan: refine with a description -->
+    <div id="scanRefine" class="scan-box hidden" style="margin-top:8px">
+      <div class="scan-box-head">Not quite right? Describe it and re-scan</div>
+      <textarea id="scanHint" placeholder="e.g. 4 scrambled eggs with cheddar cheese, cooked in butter"></textarea>
+      <button class="btn primary full" onclick="rescanWithHint()">Re-analyze with description</button>
+    </div>
 
     <div id="foodPickList" class="food-list"></div>
 
@@ -771,11 +805,13 @@
 <!-- ============ Water modal ============ -->
 <div class="modal-bg" id="waterModalBg">
   <div class="modal">
-    <div class="row between">
+    <div class="modal-head">
       <h3>Add water</h3>
-      <button class="btn ghost sm" onclick="closeModal('waterModalBg')">✕</button>
+      <button class="icon-btn" onclick="closeModal('waterModalBg')" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
-    <label>Amount (ml)</label>
+    <label style="margin-top:12px">Amount (ml)</label>
     <input type="number" id="waterAmt" value="250" min="0" step="50" />
     <button class="btn primary full" style="margin-top:10px" onclick="addWaterCustom()">Add</button>
   </div>
@@ -784,25 +820,26 @@
 <!-- ============ Day detail modal ============ -->
 <div class="modal-bg" id="dayModalBg">
   <div class="modal">
-    <div class="row between">
+    <div class="modal-head">
       <h3 id="dayModalTitle">Day</h3>
-      <button class="btn ghost sm" onclick="closeModal('dayModalBg')">✕</button>
+      <button class="icon-btn" onclick="closeModal('dayModalBg')" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
-    <div id="dayModalBody"></div>
+    <div id="dayModalBody" style="margin-top:12px"></div>
   </div>
 </div>
 
 <!-- ============ Onboarding ============ -->
 <div class="modal-bg" id="onboardBg">
-  <div class="modal">
+  <div class="modal" style="padding-top:18px">
     <h3>Welcome, Lele</h3>
     <p class="small">Bari Tracker is a private daily log for your post-bypass routine. Everything stays on this device.</p>
     <ul class="small">
-      <li><strong>Today</strong> — log foods & water, see your protein, calories, water progress.</li>
+      <li><strong>Today</strong> — log foods & water, track protein/calories/water, and do a quick check-in.</li>
       <li><strong>Meds</strong> — daily checklist (omeprazole, multivitamin, calcium, omega-3) and your schedule.</li>
-      <li><strong>Journal</strong> — quick symptoms log, smoking quit streak.</li>
       <li><strong>History</strong> — calendar of past days, weekly summary, 30-day trends.</li>
-      <li><strong>Settings</strong> — adjust wake-up time, targets, meds, export/import data.</li>
+      <li><strong>Settings</strong> — wake-up time, targets, meds, AI photo scan, export/import.</li>
     </ul>
     <p class="small">Add to your iPhone home screen via Share → “Add to Home Screen” for an app-like experience.</p>
     <button class="btn primary full" onclick="closeOnboard()">Let’s go</button>
@@ -1193,7 +1230,9 @@ function openFoodModal() {
   $('foodSearch').value = "";
   $('scanHint').value = "";
   $('customFoodForm').classList.add('hidden');
+  $('scanRefine').classList.add('hidden');
   expandedFood = null;
+  lastScanBase64 = null;
   setScanStatus('');
   renderFoodList();
   $('foodModalBg').classList.add('show');
@@ -1235,19 +1274,15 @@ function renderFoodList() {
   const out = $('foodPickList'); out.innerHTML='';
 
   if (q === '') {
-    // Idle state: show Recent + Suggested + All
-    const recent = recentFoodNames();
+    // Idle state: only show foods you've logged before (Recent). No generic suggestions.
+    const recent = recentFoodNames(8);
     if (recent.length) {
       const head = document.createElement('div'); head.className='food-section-head'; head.textContent='Recent';
       out.appendChild(head);
       recent.forEach(n => out.appendChild(buildFoodRow(allFoods().find(f=>f.n===n))));
+    } else {
+      out.innerHTML='<div class="small" style="padding:20px; text-align:center">Search a food above, scan a photo, or add a custom food.</div>';
     }
-    const head2 = document.createElement('div'); head2.className='food-section-head';
-    head2.textContent = recent.length ? 'Suggested' : 'Suggested';
-    out.appendChild(head2);
-    POPULAR.filter(n => !recent.includes(n))
-      .map(n => allFoods().find(f=>f.n===n)).filter(Boolean)
-      .forEach(f => out.appendChild(buildFoodRow(f)));
   } else {
     const list = allFoods().filter(f=>f.n.toLowerCase().includes(q)).slice(0,40);
     if (list.length === 0) {
@@ -1360,24 +1395,38 @@ async function fileToResizedBase64(file, maxDim=1024) {
   const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
   return dataUrl.split(',')[1]; // strip "data:image/jpeg;base64,"
 }
+let lastScanBase64 = null;
+
+// Step 1: photo picked → scan straight away (no description needed)
 async function scanFoodImage(ev) {
   const file = ev.target.files[0];
   ev.target.value = ''; // allow re-pick of same file
   if (!file) return;
-  const key = state.settings.anthropicKey;
-  if (!key) {
+  if (!state.settings.anthropicKey) {
     setScanStatus('Add your Claude API key in Settings first.', true);
     return;
   }
-  setScanStatus('Analyzing photo…', false, true);
-
-  let base64;
-  try { base64 = await fileToResizedBase64(file); }
+  setScanStatus('Reading photo…', false, true);
+  try { lastScanBase64 = await fileToResizedBase64(file); }
   catch (e) { setScanStatus('Could not read image.', true); return; }
+  doScan('');
+}
 
+// Step 2 (optional): user typed a description → re-scan the same photo
+function rescanWithHint() {
   const hint = ($('scanHint').value || '').trim();
+  if (!lastScanBase64) { setScanStatus('Take a photo first.', true); return; }
+  if (!hint) { setScanStatus('Type a description, then re-analyze.', true); return; }
+  doScan(hint);
+}
+
+async function doScan(hint) {
+  const key = state.settings.anthropicKey;
+  if (!key || !lastScanBase64) return;
+  setScanStatus(hint ? 'Re-analyzing with your description…' : 'Analyzing photo…', false, true);
+
   const hintBlock = hint
-    ? `\n\nThe person ate this and described it as: "${hint}"\nTrust this description for identity, ingredients, and quantity — the photo may not show everything (e.g. hidden cheese, oil, number of items). Use the photo mainly to estimate portion size and confirm.`
+    ? `\n\nThe person ate this and described it as: "${hint}"\nTrust this description for identity, ingredients, and quantity — the photo may not show everything (e.g. hidden cheese, oil, number of items). Use the photo mainly to estimate portion size.`
     : '';
 
   const prompt = `You are a nutrition expert. Analyze this meal. Respond with ONLY a JSON object, no markdown, no prose.
@@ -1413,7 +1462,7 @@ Rules:
         messages: [{
           role: 'user',
           content: [
-            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64 } },
+            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: lastScanBase64 } },
             { type: 'text', text: prompt }
           ]
         }]
@@ -1427,18 +1476,18 @@ Rules:
     }
     const data = await res.json();
     let text = data.content?.[0]?.text || '';
-    // Strip code fences if model added any
     text = text.replace(/^```(?:json)?\s*|\s*```$/g, '').trim();
     let parsed;
     try { parsed = JSON.parse(text); }
     catch { setScanStatus('Could not parse response. Try a clearer photo.', true); return; }
 
     if (parsed.error) {
-      setScanStatus(parsed.error, true);
+      setScanStatus(parsed.error + ' — try describing it below.', true);
+      $('scanRefine').classList.remove('hidden');
       return;
     }
 
-    // Save as custom food, then expand it
+    // Save as custom food, then expand it for confirmation
     const food = {
       n: parsed.name,
       kcal: +parsed.per_100g.kcal || 0,
@@ -1449,11 +1498,11 @@ Rules:
     };
     state.customFoods.push(food);
     save();
-    setScanStatus(`Identified: ${food.n} (${parsed.confidence || 'unknown'} confidence). Edit grams below if needed.`, false);
+    setScanStatus(`Identified: ${food.n} (${parsed.confidence || 'unknown'} confidence). Check the grams below, then add it. Wrong? Describe it and re-analyze.`, false);
+    $('scanRefine').classList.remove('hidden');
     expandedFood = food.n;
     $('foodSearch').value = food.n;
     renderFoodList();
-    // Pre-fill the suggested grams from the AI estimate
     setTimeout(()=> {
       const amtEl = $('rowAmount');
       if (amtEl && parsed.estimated_grams) {
@@ -1615,18 +1664,25 @@ function saveJournal() {
   toast("Check-in saved");
 }
 function quitStreak() {
-  // count days back from today where smoke != 'yes'
-  let streak = 0;
-  const d = new Date();
-  for (let i=0;i<3650;i++) {
-    const k = ymd(d);
-    const dd = state.days[k];
-    if (dd && dd.journal && dd.journal.smoke==='yes') break;
-    streak++;
-    d.setDate(d.getDate()-1);
+  // Days since the last logged "smoked" day.
+  // Only counts days that actually exist in the log — no phantom 10-year streaks.
+  const keys = Object.keys(state.days).sort(); // ascending YYYY-MM-DD
+  if (keys.length === 0) return 0;
+  // Find the most recent day where smoking was logged as 'yes'
+  let lastSmokeKey = null;
+  for (const k of keys) {
+    const j = state.days[k].journal;
+    if (j && j.smoke === 'yes') lastSmokeKey = k;
   }
-  // Don't count days that were never logged beyond today (cap at logged span)
-  return streak;
+  const today = new Date();
+  if (!lastSmokeKey) {
+    // Never logged a smoke — streak = days from first log until today
+    const first = new Date(keys[0] + 'T00:00:00');
+    return Math.max(0, Math.round((today - first) / 86400000) + 1);
+  }
+  // Streak = whole days between the last smoke day and today
+  const last = new Date(lastSmokeKey + 'T00:00:00');
+  return Math.max(0, Math.round((today - last) / 86400000));
 }
 
 /* ---------- History ---------- */
@@ -1771,17 +1827,20 @@ function saveSettings() {
 function renderMedsTemplate() {
   const wrap = $('medsTemplate'); wrap.innerHTML='';
   state.meds.forEach((m, idx)=>{
-    const row = document.createElement('div'); row.className='checkbox-row';
-    row.innerHTML = `
-      <div style="flex:1">
-        <input value="${m.name}" data-idx="${idx}" data-k="name" />
-        <div class="grid2" style="margin-top:6px">
-          <input type="number" value="${m.offset}" data-idx="${idx}" data-k="offset" placeholder="minutes after wake"/>
-          <input value="${m.note||''}" data-idx="${idx}" data-k="note" placeholder="note"/>
-        </div>
+    const card = document.createElement('div');
+    card.className = 'med-edit';
+    card.innerHTML = `
+      <div class="row between" style="margin-bottom:8px">
+        <input value="${m.name}" data-idx="${idx}" data-k="name" placeholder="Name" style="font-weight:600" />
+        <button class="icon-btn" onclick="removeMed(${idx})" aria-label="Remove" style="margin-left:8px; flex:0 0 38px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
-      <button class="btn sm danger" onclick="removeMed(${idx})">✕</button>`;
-    wrap.appendChild(row);
+      <label>Minutes after wake-up</label>
+      <input type="number" value="${m.offset}" data-idx="${idx}" data-k="offset" placeholder="e.g. 30" />
+      <label style="margin-top:8px">Note (when to take it)</label>
+      <input value="${m.note||''}" data-idx="${idx}" data-k="note" placeholder="e.g. with breakfast" />`;
+    wrap.appendChild(card);
   });
   wrap.querySelectorAll('input').forEach(inp=>{
     inp.addEventListener('change', e=>{
