@@ -3,347 +3,740 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#0f172a" />
+<meta name="theme-color" content="#0e0a1a" />
 <title>Bari Tracker</title>
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon-192.png" />
 <style>
-  /* ====== Theme ====== */
-  :root {
-    --bg: #f5f5f4;
-    --surface: #ffffff;
-    --surface-2: #f0efed;
-    --text: #18181b;
-    --text-dim: #71717a;
-    --border: #e4e4e7;
-    --primary: #16a34a;
-    --primary-2: #22c55e;
-    --good: #16a34a;
-    --warn: #d97706;
-    --bad:  #b91c1c;
-    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 1px 3px rgba(0,0,0,.06);
-    --radius: 14px;
-  }
-  [data-theme="dark"] {
-    --bg: #000000;
-    --surface: #070b14;
-    --surface-2: #0e1525;
-    --text: #e8eef7;
-    --text-dim: #6b7689;
-    --border: #161e30;
-    --primary: #2563eb;
-    --primary-2: #1d4ed8;
-    --grad: linear-gradient(135deg, #172554 0%, #1e40af 55%, #1d4ed8 100%);
-    --good: #0ea968;
-    --warn: #d97706;
-    --bad:  #e11d48;
-    --shadow: 0 4px 20px rgba(0,0,0,.5);
+  /* ====================================================================
+     Bari Tracker — Visual Redesign v2
+     Warm-dark · multi-color · large-radius · icon-led
+  ==================================================================== */
 
-    /* Accent palette — darker blue-leaning tones */
-    --c-protein: #818cf8;   /* indigo */
-    --c-cal:     #38bdf8;   /* sky blue */
-    --c-water:   #22d3ee;   /* cyan */
-    --c-meds:    #6366f1;   /* deep indigo */
-    --c-journal: #2dd4bf;   /* teal */
-    --c-history: #3b82f6;   /* blue */
-    --c-settings:#64748b;   /* slate */
-    --c-streak:  #60a5fa;   /* light blue */
+  :root {
+    /* Base */
+    --bg:        #0e0a1a;
+    --surface:   #1a1430;
+    --text:      #f6f1ff;
+    --dim:       #9b8fb5;
+    --dimmer:    #594d75;
+    --border:    rgba(255,255,255,.05);
+
+    /* Protein (lavender) */
+    --c-protein:        #c4b5fd;
+    --c-protein-deep:   #8b5cf6;
+    --c-protein-tint:   linear-gradient(150deg, rgba(167,139,250,.32), rgba(167,139,250,.05));
+    --c-protein-glow:   rgba(167,139,250,.45);
+
+    /* Water (sky) */
+    --c-water:          #7dd3fc;
+    --c-water-deep:     #0284c7;
+    --c-water-tint:     linear-gradient(150deg, rgba(56,189,248,.32), rgba(56,189,248,.05));
+    --c-water-glow:     rgba(56,189,248,.45);
+
+    /* Calories (amber) */
+    --c-cal:            #fcd34d;
+    --c-cal-deep:       #d97706;
+    --c-cal-tint:       linear-gradient(150deg, rgba(251,191,36,.28), rgba(251,191,36,.05));
+    --c-cal-glow:       rgba(251,191,36,.4);
+
+    /* Meds (rose) */
+    --c-meds:           #f9a8d4;
+    --c-meds-deep:      #db2777;
+    --c-meds-tint:      linear-gradient(150deg, rgba(244,114,182,.28), rgba(244,114,182,.05));
+    --c-meds-glow:      rgba(244,114,182,.45);
+
+    /* Mood / success (mint) */
+    --c-mood:           #86efac;
+    --c-mood-deep:      #16a34a;
+    --c-mood-tint:      linear-gradient(150deg, rgba(74,222,128,.28), rgba(74,222,128,.05));
+    --c-mood-glow:      rgba(74,222,128,.45);
+
+    /* Streak (warm orange) */
+    --c-streak:         #fed7aa;
+    --c-streak-deep:    #ea580c;
+    --c-streak-tint:    linear-gradient(135deg, rgba(251,146,60,.35), rgba(252,165,165,.15));
+    --c-streak-glow:    rgba(251,146,60,.5);
+
+    /* Status */
+    --danger:           #ef4444;
+    --danger-soft:      #fca5a5;
+
+    /* Shape */
+    --r-card:           28px;
+    --r-card-lg:        32px;
+    --r-inner:          22px;
+    --r-pill:           999px;
+
+    /* Compatibility aliases (legacy variable names referenced by old JS) */
+    --text-dim:  var(--dim);
+    --surface-2: rgba(255,255,255,.04);
+    --primary:   var(--c-protein);
+    --primary-2: var(--c-meds);
+    --grad:      linear-gradient(135deg, var(--c-protein), var(--c-meds));
+    --good:      var(--c-mood);
+    --warn:      var(--c-cal);
+    --bad:       var(--danger);
+    --shadow:    0 8px 24px rgba(0,0,0,.5);
+    --radius:    var(--r-card);
+    --c-streak:  var(--c-streak);
+    --c-meds:    var(--c-meds);
   }
 
   * { box-sizing: border-box; }
-  html, body { margin:0; padding:0; background:var(--bg); color:var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Roboto", sans-serif;
+  html, body {
+    margin:0; padding:0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    font-variant-numeric: tabular-nums;
   }
-  body { padding-bottom: 96px; }
+  body { padding-bottom: 130px; min-height: 100vh; }
 
-  header.appbar {
-    position: sticky; top:0; z-index: 30;
-    background: var(--bg);
-    padding: 18px 18px 10px; display:flex; align-items:flex-end; gap:10px;
-  }
-  header.appbar h1 { font-size:22px; margin:0; flex:1; letter-spacing:-.02em; font-weight:600; }
-  header.appbar .sub { color:var(--text-dim); font-size:13px; }
-  .icon-btn {
-    width:38px; height:38px; border-radius:10px; border:1px solid var(--border);
-    background: var(--surface); color: var(--text); display:inline-flex;
-    align-items:center; justify-content:center; cursor:pointer; padding:0;
-  }
-  .icon-btn:hover { border-color: var(--primary); }
-  .icon-btn svg { width:18px; height:18px; }
-
-  main { max-width: 720px; margin: 0 auto; padding: 16px; }
-
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
-    box-shadow: var(--shadow);
-  }
-  .card.tight { padding: 12px 14px; }
-  .card.hero { padding: 18px 16px 14px; }
-  details.card summary { list-style: none; }
-  details.card summary::-webkit-details-marker { display:none; }
-  details.card summary::after { content: "›"; float:right; color:var(--text-dim); transition: transform .2s; }
-  details.card[open] summary::after { transform: rotate(90deg); }
-
-  .section-title {
-    font-size: 12px; text-transform: uppercase; letter-spacing: .08em;
-    color: var(--text-dim); font-weight: 600;
-  }
-
-  /* Hero rings */
-  .rings { display:grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
-  .ring-stat { text-align:center; }
-  .ring-num { font-size: 22px; font-weight: 600; letter-spacing:-.02em; }
-  .ring-num small { font-size: 11px; color: var(--text-dim); font-weight: 400; margin-left: 2px; }
-  .ring-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
-  .ring-bars { display:grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
-
-  /* Quick water buttons */
-  .quick-row { display:grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
-  .quick {
-    background: var(--surface-2); color: var(--text); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 4px; font-size: 14px; font-weight: 500;
-    cursor: pointer; transition: all .15s ease;
-  }
-  .quick:hover { border-color: var(--primary); color: var(--primary); }
-  .quick:active { transform: scale(.96); }
-  .quick.ghost { background: transparent; color: var(--text-dim); }
-
-  .progress.slim { height: 5px; }
-
-  /* Celebration confetti */
-  .confetti-layer {
-    position: fixed; inset: 0; pointer-events: none; z-index: 100; overflow: hidden;
-  }
-  .confetti {
-    position: absolute; width: 10px; height: 14px; top: -20px;
-    animation: fall linear forwards;
-    will-change: transform, opacity;
-  }
-  @keyframes fall {
-    0%   { transform: translate3d(0,-20px,0) rotate(0deg); opacity: 1; }
-    100% { transform: translate3d(var(--dx),105vh,0) rotate(720deg); opacity: .9; }
-  }
-  .celebrate-banner {
-    position: fixed; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(.5);
-    background: var(--grad); color: #fff; padding: 18px 28px; border-radius: 18px;
-    font-size: 18px; font-weight: 600; letter-spacing: -.01em;
-    box-shadow: 0 10px 40px rgba(59,130,246,.5);
-    z-index: 101; opacity: 0;
-    animation: pop .6s cubic-bezier(.34,1.56,.64,1) forwards, fadeOut .4s 1.6s ease forwards;
-    text-align: center; max-width: 80%;
-  }
-  @keyframes pop {
-    0% { opacity:0; transform: translate(-50%,-50%) scale(.3); }
-    100% { opacity:1; transform: translate(-50%,-50%) scale(1); }
-  }
-  @keyframes fadeOut { to { opacity: 0; transform: translate(-50%,-60%) scale(.95); } }
-
-  /* Streak chips */
-  .streaks { display:grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
-  .streak-chip {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-    padding: 10px; display:flex; align-items:center; gap:10px;
-  }
-  .streak-chip svg { width: 22px; height: 22px; flex:0 0 22px; }
-  .streak-n { font-size: 18px; font-weight: 700; line-height: 1.1; letter-spacing:-.02em; }
-  .streak-l { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing:.04em; }
-
-  /* Per-color quick buttons */
-  .quick.water:hover { border-color: var(--c-water); color: var(--c-water); }
-
-  /* Mood/check-in chips */
-  .chip {
-    background: var(--surface-2); color: var(--text);
-    border: 1px solid var(--border); border-radius: 999px;
-    padding: 8px 14px; font-size: 14px; cursor: pointer;
-    transition: all .15s ease;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .chip svg { width: 16px; height: 16px; }
-  .chip:hover { border-color: var(--primary); }
-  .chip:active { transform: scale(.95); }
-  .chip.on { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 4px 14px rgba(59,130,246,.3); }
-
-  /* Food modal — clean list */
-  .search-wrap { position: relative; }
-  .search-wrap .search-ico {
-    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-    width: 18px; height: 18px; color: var(--text-dim); pointer-events: none;
-  }
-  .search-wrap input { padding-left: 38px; }
-
-  /* AI scan box */
-  .scan-box {
-    margin-top: 12px; padding: 14px;
-    border-radius: 14px; border: 1px solid var(--border);
-    background: linear-gradient(135deg, rgba(244,114,182,.08), rgba(59,130,246,.06));
-  }
-  .scan-box-head {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 13px; font-weight: 600; color: var(--c-protein);
-    margin-bottom: 10px;
-  }
-  .scan-box-head svg { width: 18px; height: 18px; }
-  .scan-box textarea { min-height: 58px; margin-bottom: 8px; }
-
-  .scan-status {
-    margin-top: 10px; padding: 12px; border-radius: 12px;
-    background: var(--surface-2); border: 1px solid var(--border);
-    display: flex; align-items: center; gap: 10px; font-size: 14px;
-  }
-  .scan-status.error { border-color: var(--bad); color: var(--bad); }
-  .spinner {
-    width: 18px; height: 18px; border-radius: 50%;
-    border: 2px solid var(--border); border-top-color: var(--primary);
-    animation: spin .7s linear infinite; flex: 0 0 18px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .food-list { margin-top: 12px; max-height: 55vh; overflow: auto; }
-  .food-section-head {
-    font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
-    color: var(--text-dim); padding: 10px 4px 6px; font-weight: 600;
-  }
-  .food-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px; border-radius: 12px; cursor: pointer;
-    transition: background .15s ease;
-  }
-  .food-row:hover { background: var(--surface-2); }
-  .food-row .nm { font-weight: 500; font-size: 15px; }
-  .food-row .mac { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
-  .food-row .mac .pp { color: var(--c-protein); font-weight: 500; }
-  .food-row .add-btn {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: var(--grad); color: #fff; border: none; flex: 0 0 32px;
-    display: inline-flex; align-items: center; justify-content: center;
-    cursor: pointer; box-shadow: 0 4px 10px rgba(59,130,246,.3);
-  }
-  .food-row .add-btn svg { width: 16px; height: 16px; }
-  .food-row.expanded { background: var(--surface-2); }
-  .food-row-expand {
-    padding: 0 12px 14px; background: var(--surface-2);
-    border-radius: 0 0 12px 12px; margin-bottom: 4px;
-    animation: expandIn .2s ease;
-  }
-  @keyframes expandIn { from { opacity:0; transform: translateY(-4px);} to {opacity:1; transform:none;} }
-  .food-row-expand .grid3 { gap: 8px; }
-  .food-row-expand .preview {
-    font-size: 12px; color: var(--text-dim); padding: 8px 0;
-    text-align: center;
-  }
-
-  .custom-form { padding-top: 4px; }
-  .row { display:flex; align-items:center; gap:10px; }
+  .hidden { display: none !important; }
+  .row { display: flex; align-items: center; gap: 10px; }
   .row.between { justify-content: space-between; }
-  .stack { display:flex; flex-direction:column; gap:10px; }
-  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .gap { gap: 8px; }
+  .small { font-size: 12px; color: var(--dim); }
+  main { max-width: 540px; margin: 0 auto; }
 
-  h2 { font-size:15px; margin:0 0 10px 0; letter-spacing:.02em; text-transform:uppercase; color:var(--text-dim);}
-  h3 { font-size:16px; margin:0 0 6px 0; }
-
-  .btn {
-    appearance:none; border:1px solid var(--border); background:var(--surface-2);
-    color:var(--text); padding:12px 14px; border-radius: 12px; font-size:15px;
-    cursor:pointer; min-height:44px; min-width:44px;
-    transition: transform .08s ease, background .15s ease, border-color .15s ease;
+  /* ===================== Status header ===================== */
+  .status-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 54px 20px 12px;
   }
-  .btn:hover { border-color: var(--primary); }
-  .btn:active { transform: scale(.97); }
-  .btn.primary { background: var(--grad); color:#fff; border:none; box-shadow: 0 4px 14px rgba(59,130,246,.35); }
-  .btn.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(59,130,246,.45); }
-  .btn.ghost { background: transparent; }
-  .btn.danger { background: var(--bad); color:#fff; border-color: var(--bad); }
-  .btn.full { width: 100%; }
-  .btn.sm { padding:8px 10px; font-size:13px; min-height:36px; }
-  .pill { font-size:12px; color:var(--text-dim); padding:4px 8px; border-radius:999px; background:var(--surface-2); border:1px solid var(--border); }
+  .sh-date { display: flex; flex-direction: column; flex-shrink: 0; }
+  .sh-weekday {
+    font-size: 13px; color: var(--dim); font-weight: 500;
+    white-space: nowrap;
+  }
+  .sh-day {
+    font-size: 26px; font-weight: 700; letter-spacing: -.02em;
+    color: var(--text); margin-top: 2px; white-space: nowrap;
+  }
+  .sh-pill {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 14px 8px 10px; border-radius: 999px;
+    background: rgba(74,222,128,.13);
+    border: 1px solid rgba(134,239,172,.2);
+    transition: background .2s, border-color .2s;
+  }
+  .sh-pill-dot {
+    width: 8px; height: 8px; border-radius: 4px;
+    background: var(--c-mood);
+    box-shadow: 0 0 12px var(--c-mood-glow);
+  }
+  .sh-pill-text { font-size: 13px; font-weight: 600; color: var(--c-mood); }
+  .sh-pill[data-kind="cal"] { background: rgba(251,191,36,.13); border-color: rgba(252,211,77,.22); }
+  .sh-pill[data-kind="cal"] .sh-pill-dot { background: var(--c-cal); box-shadow: 0 0 12px var(--c-cal-glow); }
+  .sh-pill[data-kind="cal"] .sh-pill-text { color: var(--c-cal); }
+  .sh-pill[data-kind="danger"] { background: rgba(239,68,68,.16); border-color: rgba(252,165,165,.22); }
+  .sh-pill[data-kind="danger"] .sh-pill-dot { background: var(--danger-soft); box-shadow: 0 0 12px rgba(239,68,68,.45); }
+  .sh-pill[data-kind="danger"] .sh-pill-text { color: var(--danger-soft); }
 
-  .progress {
-    background: var(--surface-2); border-radius: 999px; height: 12px; overflow:hidden;
+  /* ===================== Protein hero ring ===================== */
+  .hero-protein {
+    margin: 0 16px 14px; padding: 24px 0 20px;
+    border-radius: 32px;
+    background: var(--c-protein-tint);
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .hero-protein .glow {
+    position: absolute; top: -50px; right: -50px;
+    width: 200px; height: 200px;
+    background: var(--c-protein-glow);
+    filter: blur(60px); border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-protein .lab {
+    display: flex; align-items: center; gap: 8px;
+    z-index: 1; margin-bottom: 4px;
+  }
+  .hero-protein .lab-chip {
+    width: 28px; height: 28px; border-radius: 14px;
+    background: var(--c-protein); color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px var(--c-protein-glow);
+  }
+  .hero-protein .lab-chip svg { width: 14px; height: 14px; }
+  .hero-protein .lab-text {
+    font-size: 13px; color: var(--c-protein);
+    font-weight: 600; letter-spacing: .01em;
+  }
+  .hero-protein .ring-wrap {
+    position: relative; width: 220px; height: 220px; z-index: 1;
+  }
+  .hero-protein .ring-wrap svg {
+    width: 220px; height: 220px; transform: rotate(-90deg);
+  }
+  .hero-protein .ring-bg { stroke: rgba(255,255,255,.06); }
+  .hero-protein .ring-arc {
+    filter: drop-shadow(0 0 8px var(--c-protein-glow));
+    transition: stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);
+  }
+  .hero-protein .ring-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .hero-protein .ring-num {
+    font-size: 64px; font-weight: 700;
+    letter-spacing: -.04em; line-height: 1;
+    color: var(--text);
+  }
+  .hero-protein .ring-sub {
+    font-size: 14px; color: var(--dim);
+    margin-top: 6px; font-weight: 500;
+  }
+  .hero-protein .suggestion {
+    margin-top: 16px; z-index: 1;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 999px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.06);
+  }
+  .hero-protein .suggestion .sug-emoji { font-size: 16px; }
+  .hero-protein .suggestion .sug-text { font-size: 12px; color: var(--text); font-weight: 500; }
+
+  /* ===================== Twin stat cards ===================== */
+  .twin-cards { display: flex; gap: 10px; padding: 0 16px 14px; }
+  .stat-card {
+    flex: 1; padding: 16px 16px 14px;
+    border-radius: 26px;
+    position: relative; overflow: hidden;
+  }
+  .stat-card.stat-water { background: var(--c-water-tint); }
+  .stat-card.stat-cal   { background: var(--c-cal-tint); }
+  .stat-card .glow {
+    position: absolute; top: -30px; right: -30px;
+    width: 100px; height: 100px;
+    filter: blur(40px); border-radius: 50%;
+  }
+  .stat-water .glow { background: var(--c-water-glow); }
+  .stat-cal   .glow { background: var(--c-cal-glow); }
+  .stat-inner { position: relative; z-index: 1; }
+  .stat-chip {
+    width: 32px; height: 32px; border-radius: 16px;
+    color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .stat-chip svg { width: 16px; height: 16px; }
+  .stat-water .stat-chip { background: var(--c-water); box-shadow: 0 4px 14px var(--c-water-glow); }
+  .stat-cal   .stat-chip { background: var(--c-cal);   box-shadow: 0 4px 14px var(--c-cal-glow); }
+  .stat-value {
+    margin-top: 12px;
+    font-size: 28px; font-weight: 700; letter-spacing: -.02em;
+    color: var(--text);
+  }
+  .stat-unit, .stat-of {
+    font-size: 14px; color: var(--dim); font-weight: 500;
+  }
+  .stat-of { font-size: 11px; }
+  .stat-bar {
+    margin-top: 12px; height: 6px; border-radius: 3px;
+    background: rgba(255,255,255,.06); overflow: hidden;
+  }
+  .stat-bar > div {
+    height: 100%; width: 0%; border-radius: 3px;
+    transition: width .6s cubic-bezier(.4,0,.2,1);
+  }
+  .stat-water .stat-bar > div { background: linear-gradient(90deg, var(--c-water), var(--c-water-deep)); box-shadow: 0 0 8px var(--c-water-glow); }
+  .stat-cal   .stat-bar > div { background: linear-gradient(90deg, var(--c-cal),   var(--c-cal-deep));   box-shadow: 0 0 8px var(--c-cal-glow); }
+
+  /* ===================== Water droplets ===================== */
+  .water-drops { display: flex; gap: 8px; padding: 0 16px 14px; }
+  .drop {
+    flex: 1; padding: 12px 0 10px; border-radius: 20px;
+    background: rgba(56,189,248,.08);
+    border: 1px solid rgba(56,189,248,.18);
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; transition: transform .1s ease, background .15s ease;
+    color: var(--text);
+  }
+  .drop:active { transform: scale(.96); }
+  .drop:hover  { background: rgba(56,189,248,.14); }
+  .drop svg { color: var(--c-water); }
+  .drop .drop-ico { line-height: 0; }
+  .drop-s .drop-ico { transform: scale(.65); }
+  .drop-m .drop-ico { transform: scale(.85); }
+  .drop-l .drop-ico { transform: scale(1); }
+  .drop-label {
+    font-size: 13px; font-weight: 600; color: var(--text);
+  }
+  .drop-custom {
+    flex: 0 0 60px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.06);
+    color: var(--dim);
+    justify-content: center;
+  }
+  .drop-custom:hover { background: rgba(255,255,255,.08); }
+
+  /* ===================== Meal bento (horizontal scroll) ===================== */
+  .bento {
+    display: flex; gap: 10px; padding: 0 16px 18px;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .bento::-webkit-scrollbar { display: none; }
+  .bento-card {
+    flex: 0 0 130px; height: 156px; border-radius: 26px;
+    padding: 14px 14px 12px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+    scroll-snap-align: start;
+    border: none; text-align: left; color: var(--text);
+    cursor: pointer; transition: transform .1s ease;
+  }
+  .bento-card:active { transform: scale(.97); }
+  .bento-card.empty {
+    background: rgba(255,255,255,.03);
+    border: 1.5px dashed rgba(255,255,255,.08);
+  }
+  .bento-card.c-protein { background: var(--c-protein-tint); }
+  .bento-card.c-water   { background: var(--c-water-tint); }
+  .bento-card.c-cal     { background: var(--c-cal-tint); }
+  .bento-card.c-meds    { background: var(--c-meds-tint); }
+  .bento-card.c-mood    { background: var(--c-mood-tint); }
+  .bento-card .bc-glow {
+    position: absolute; top: -30px; right: -30px;
+    width: 100px; height: 100px; border-radius: 50%;
+    filter: blur(40px); opacity: .5; pointer-events: none;
+  }
+  .bento-card.c-protein .bc-glow { background: var(--c-protein-glow); }
+  .bento-card.c-water   .bc-glow { background: var(--c-water-glow); }
+  .bento-card.c-cal     .bc-glow { background: var(--c-cal-glow); }
+  .bento-card.c-meds    .bc-glow { background: var(--c-meds-glow); }
+  .bento-card.c-mood    .bc-glow { background: var(--c-mood-glow); }
+  .bento-card .bc-top {
+    position: relative; z-index: 1;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .bento-card .bc-glyph { font-size: 28px; line-height: 1; }
+  .bento-card .bc-glyph.dim { opacity: .35; }
+  .bento-card .bc-time { font-size: 10px; color: var(--dim); font-weight: 600; }
+  .bento-card .bc-bot { position: relative; z-index: 1; }
+  .bento-card .bc-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .bento-card .bc-stats {
+    margin-top: 4px; display: flex; gap: 6px; align-items: baseline;
+  }
+  .bento-card .bc-p {
+    font-size: 17px; font-weight: 700; letter-spacing: -.01em;
+  }
+  .bento-card.c-protein .bc-p { color: var(--c-protein); }
+  .bento-card.c-water   .bc-p { color: var(--c-water); }
+  .bento-card.c-cal     .bc-p { color: var(--c-cal); }
+  .bento-card.c-meds    .bc-p { color: var(--c-meds); }
+  .bento-card.c-mood    .bc-p { color: var(--c-mood); }
+  .bento-card .bc-p small { font-size: 10px; font-weight: 600; }
+  .bento-card .bc-k { font-size: 10px; color: var(--dim); }
+  .bento-card .bc-empty { margin-top: 4px; font-size: 11px; color: var(--dimmer); }
+
+  /* ===================== Mood faces ===================== */
+  .mood-row {
+    display: flex; gap: 8px; padding: 0 16px 14px;
+    justify-content: space-between;
+  }
+  .mood-face {
+    flex: 1; padding: 14px 0 10px; border-radius: 24px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.05);
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    position: relative; overflow: hidden;
+    cursor: pointer; color: var(--dim);
+    transition: transform .1s ease;
+  }
+  .mood-face:active { transform: scale(.95); }
+  .mood-face .emoji {
+    font-size: 30px; line-height: 1; z-index: 1;
+    filter: grayscale(.5); opacity: .5;
+  }
+  .mood-face .label { font-size: 10px; font-weight: 600; z-index: 1; }
+  .mood-face.on { border: none; }
+  .mood-face.on .emoji { filter: none; opacity: 1; }
+  .mood-face.on::before {
+    content: ""; position: absolute; inset: -10px;
+    filter: blur(30px); border-radius: 50%; opacity: .6;
+    pointer-events: none;
+  }
+  .mood-face[data-feel="great"].on { background: var(--c-mood-tint); }
+  .mood-face[data-feel="great"].on::before { background: var(--c-mood-glow); }
+  .mood-face[data-feel="great"].on .label { color: var(--c-mood); }
+  .mood-face[data-feel="ok"].on { background: var(--c-water-tint); }
+  .mood-face[data-feel="ok"].on::before { background: var(--c-water-glow); }
+  .mood-face[data-feel="ok"].on .label { color: var(--c-water); }
+  .mood-face[data-feel="rough"].on { background: var(--c-cal-tint); }
+  .mood-face[data-feel="rough"].on::before { background: var(--c-cal-glow); }
+  .mood-face[data-feel="rough"].on .label { color: var(--c-cal); }
+  .mood-face[data-feel="pain"].on { background: var(--c-meds-tint); }
+  .mood-face[data-feel="pain"].on::before { background: var(--c-meds-glow); }
+  .mood-face[data-feel="pain"].on .label { color: var(--c-meds); }
+
+  /* ===================== Smoke card ===================== */
+  .smoke-card { padding: 0 16px 14px; }
+  .smoke-btn {
+    width: 100%; padding: 14px;
+    border-radius: 22px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.05);
+    color: var(--dim);
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all .15s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .smoke-btn:active { transform: scale(.98); }
+  .smoke-btn.on {
+    background: rgba(239,68,68,.10);
+    border-color: rgba(252,165,165,.18);
+    color: var(--danger-soft);
+  }
+
+  /* ===================== Streak badge ===================== */
+  .streak-badge {
+    margin: 0 16px 18px; padding: 14px 16px;
+    border-radius: 22px;
+    background: var(--c-streak-tint);
+    display: flex; align-items: center; gap: 14px;
+    position: relative; overflow: hidden;
+  }
+  .streak-badge .sb-glow {
+    position: absolute; inset: 0;
+    background: var(--c-streak-glow); filter: blur(60px);
+    opacity: .35; pointer-events: none;
+  }
+  .sb-circle {
+    width: 42px; height: 42px; border-radius: 21px;
+    background: linear-gradient(135deg, var(--c-streak), var(--c-streak-deep));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; z-index: 1;
+    box-shadow: 0 4px 18px var(--c-streak-glow);
+  }
+  .sb-text { flex: 1; z-index: 1; }
+  .sb-title {
+    font-size: 16px; font-weight: 700; color: var(--text);
+    letter-spacing: -.01em;
+  }
+  .sb-sub { font-size: 11px; color: var(--dim); margin-top: 2px; }
+  .sb-chevron { color: var(--dim); z-index: 1; }
+
+  /* ===================== Entries collapse + check-in details ===================== */
+  .entries-collapse, .checkin-details {
+    margin: 0 16px 12px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 22px;
+    padding: 14px 16px;
+  }
+  .entries-collapse[open], .checkin-details[open] { padding-bottom: 16px; }
+  .entries-collapse summary, .checkin-details summary {
+    list-style: none; cursor: pointer;
+    font-size: 13px; font-weight: 600; color: var(--dim);
+    letter-spacing: .02em;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .entries-collapse summary::-webkit-details-marker,
+  .checkin-details summary::-webkit-details-marker { display: none; }
+  .entries-collapse summary::after,
+  .checkin-details summary::after {
+    content: "›"; color: var(--dimmer); font-size: 18px; line-height: 1;
+    transition: transform .2s ease;
+  }
+  .entries-collapse[open] summary::after,
+  .checkin-details[open] summary::after { transform: rotate(90deg); }
+
+  .ent-slot { margin-top: 12px; }
+  .ent-head {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--dim); font-weight: 700; margin-bottom: 6px;
+  }
+  .ent-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+  .ent-row:last-child { border-bottom: none; }
+  .ent-info { flex: 1; min-width: 0; }
+  .ent-nm { font-size: 14px; font-weight: 500; color: var(--text); }
+  .ent-mac { font-size: 11px; color: var(--dim); margin-top: 2px; }
+  .ent-actions { display: flex; gap: 6px; }
+  .icon-btn-sm {
+    width: 30px; height: 30px; border-radius: 10px;
+    background: rgba(255,255,255,.05); color: var(--dim);
+    border: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .icon-btn-sm svg { width: 14px; height: 14px; }
+  .icon-btn-sm.danger { color: var(--danger-soft); }
+  .ent-empty { padding: 8px 0; }
+
+  .checkin-inner { margin-top: 12px; }
+  .checkin-inner label {
+    font-size: 12px; color: var(--dim); display: block; margin: 12px 0 4px;
+    font-weight: 500;
+  }
+  .checkin-inner label:first-child { margin-top: 0; }
+  .checkin-inner input[type=range] { width: 100%; }
+
+  /* ===================== Meds screen ===================== */
+  .meds-progress {
+    padding: 0 20px 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .dashes { display: flex; gap: 4px; }
+  .dash {
+    width: 22px; height: 8px; border-radius: 4px;
+    background: rgba(255,255,255,.08);
+  }
+  .dash.on {
+    background: var(--c-mood);
+    box-shadow: 0 0 8px var(--c-mood-glow);
+  }
+  .meds-progress-text { font-size: 13px; color: var(--dim); font-weight: 500; }
+
+  /* "Next up" hero */
+  .next-up-hero {
+    margin: 0 16px 18px; padding: 24px;
+    border-radius: 32px;
+    background: var(--c-meds-tint);
+    position: relative; overflow: hidden;
+  }
+  .next-up-hero .nu-glow {
+    position: absolute; top: -60px; right: -40px;
+    width: 200px; height: 200px;
+    background: var(--c-meds-glow); filter: blur(60px);
+    border-radius: 50%; pointer-events: none;
+  }
+  .nu-body { position: relative; z-index: 1; }
+  .nu-row { display: flex; align-items: center; gap: 8px; }
+  .nu-chip {
+    width: 32px; height: 32px; border-radius: 16px;
+    background: var(--c-meds); color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px var(--c-meds-glow);
+  }
+  .nu-chip svg { width: 16px; height: 16px; }
+  .nu-label { font-size: 13px; color: var(--c-meds); font-weight: 600; }
+  .nu-spacer { flex: 1; }
+  .nu-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+  }
+  .nu-pill.danger { background: rgba(239,68,68,.18); color: var(--danger-soft); }
+  .nu-pill.danger .nu-pill-dot { background: var(--danger-soft); }
+  .nu-pill.ok { background: rgba(134,239,172,.16); color: var(--c-mood); }
+  .nu-pill.ok .nu-pill-dot { background: var(--c-mood); }
+  .nu-pill-dot { width: 6px; height: 6px; border-radius: 3px; }
+  .nu-name {
+    font-size: 26px; font-weight: 700; letter-spacing: -.02em;
+    color: var(--text); margin-top: 12px; line-height: 1.15;
+  }
+  .nu-sub { font-size: 13px; color: var(--dim); margin-top: 4px; }
+  .nu-actions { display: flex; gap: 8px; margin-top: 18px; }
+  .nu-take {
+    flex: 1; padding: 14px 0; border-radius: 18px;
+    background: linear-gradient(135deg, var(--c-meds), var(--c-meds-deep));
+    color: #fff; text-align: center; font-size: 15px; font-weight: 700;
+    box-shadow: 0 8px 24px var(--c-meds-glow);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    border: none; cursor: pointer;
+  }
+  .nu-take svg { width: 18px; height: 18px; }
+  .nu-take:active { transform: scale(.98); }
+  .nu-skip {
+    padding: 14px 22px; border-radius: 18px;
+    background: rgba(255,255,255,.06); color: var(--dim);
+    font-size: 15px; font-weight: 600;
+    border: none; cursor: pointer;
+  }
+
+  /* Meds list */
+  .meds-list { padding: 0 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+  .m-row {
+    padding: 12px 14px; border-radius: 22px;
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,.03);
+    cursor: pointer; transition: transform .1s ease;
+  }
+  .m-row:active { transform: scale(.99); }
+  .m-row.taken    { background: rgba(74,222,128,.07); }
+  .m-row.overdue  { background: rgba(239,68,68,.10); }
+  .m-row.now      { background: var(--c-meds-tint); }
+  .m-row.soon     { background: rgba(255,255,255,.03); opacity: .5; }
+  .m-pip {
+    width: 36px; height: 36px; border-radius: 18px; flex: 0 0 36px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .m-pip.taken { background: var(--c-mood); color: var(--bg); box-shadow: 0 4px 12px var(--c-mood-glow); }
+  .m-pip.taken svg { width: 16px; height: 16px; }
+  .m-pip.overdue { background: rgba(239,68,68,.18); color: var(--danger-soft); font-weight: 700; font-size: 16px; }
+  .m-pip.now { background: var(--c-meds); color: var(--bg); box-shadow: 0 4px 12px var(--c-meds-glow); }
+  .m-pip-dot { width: 10px; height: 10px; border-radius: 5px; background: var(--bg); }
+  .m-pip.soon { border: 2px solid rgba(255,255,255,.1); }
+  .m-body { flex: 1; min-width: 0; }
+  .m-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .m-row.taken .m-name { text-decoration: line-through; opacity: .8; }
+  .m-time { font-size: 11px; color: var(--dim); margin-top: 2px; }
+  .m-now-badge {
+    font-size: 10px; font-weight: 700; color: var(--c-meds);
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(244,114,182,.18);
+    letter-spacing: .06em;
+  }
+
+  /* Timeline (kept from old) */
+  .timeline-wrap {
+    margin: 0 16px 18px; padding: 16px;
+    background: rgba(255,255,255,.03);
     border: 1px solid var(--border);
+    border-radius: 22px;
   }
-  .progress > div {
-    height:100%; background: linear-gradient(90deg,var(--primary), var(--primary-2));
-    width: 0%; transition: width .6s cubic-bezier(.4,0,.2,1);
-    border-radius: 999px;
+  .card-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--dim); font-weight: 700; margin: 0 0 12px;
   }
-  .progress.protein > div { background: linear-gradient(90deg,#4338ca,#818cf8); }
-  .progress.cal     > div { background: linear-gradient(90deg,#0369a1,#38bdf8); }
-  .progress.water   > div { background: linear-gradient(90deg,#0e7490,#22d3ee); }
+  .timeline { position: relative; padding-left: 18px; }
+  .timeline::before {
+    content: ""; position: absolute; left: 6px; top: 6px; bottom: 6px;
+    width: 2px; background: rgba(255,255,255,.08);
+  }
+  .tl-item { position: relative; padding: 6px 0 14px; }
+  .tl-item::before {
+    content: ""; position: absolute; left: -15px; top: 10px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--c-meds); border: 2px solid var(--bg);
+    box-shadow: 0 0 8px var(--c-meds-glow);
+  }
+  .tl-time { font-size: 11px; color: var(--dim); font-weight: 600; }
 
-  .metric { display:flex; flex-direction:column; gap:6px; }
-  .metric .top { display:flex; justify-content:space-between; align-items:baseline; }
-  .metric .v { font-size: 22px; font-weight: 600; }
-  .metric .t { font-size: 12px; color:var(--text-dim); }
-  .metric .help { color:var(--text-dim); font-size:12px; cursor: help; border-bottom:1px dashed var(--border); }
+  /* ===================== Generic card / buttons / inputs (reskinned) ===================== */
+  .card {
+    margin: 0 16px 12px; padding: 16px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+  }
+  .card h2 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--dim); font-weight: 700; margin: 0 0 12px;
+  }
+  .card h3 { font-size: 16px; margin: 0 0 6px 0; color: var(--text); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
 
   input, select, textarea {
-    width:100%; padding:11px 12px; border:1px solid var(--border); border-radius:10px;
-    background: var(--surface); color: var(--text); font-size:15px;
+    width: 100%; padding: 12px 14px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--c-protein);
   }
   textarea { min-height: 70px; resize: vertical; }
-  label { font-size:13px; color:var(--text-dim); display:block; margin-bottom:4px; }
+  label {
+    font-size: 12px; color: var(--dim); display: block;
+    margin-bottom: 4px; font-weight: 500;
+  }
 
-  .meal { border:1px dashed var(--border); border-radius:12px; padding:10px; margin-top:8px;}
-  .meal h4 { margin:0 0 6px 0; font-size:13px; color: var(--text-dim); text-transform:uppercase; letter-spacing:.05em; }
-  .food-item { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); gap:8px;}
-  .food-item:last-child { border-bottom:none; }
-  .food-item .nm { font-weight:500; }
-  .food-item .mac { font-size:12px; color: var(--text-dim); }
-  .food-item .actions { display:flex; gap:6px; }
+  .btn {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.04);
+    color: var(--text);
+    padding: 12px 14px; border-radius: 14px;
+    font-size: 15px; cursor: pointer;
+    min-height: 44px;
+    transition: transform .1s ease, background .15s ease;
+    font-family: inherit;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn:hover { background: rgba(255,255,255,.07); }
+  .btn.primary {
+    background: linear-gradient(135deg, var(--c-protein), var(--c-meds));
+    color: #fff; border: none;
+    box-shadow: 0 4px 14px var(--c-meds-glow);
+  }
+  .btn.full { width: 100%; }
+  .btn.sm { padding: 8px 10px; font-size: 13px; min-height: 36px; }
+  .btn.ghost { background: transparent; }
+  .btn.danger { background: rgba(239,68,68,.15); color: var(--danger-soft); border-color: rgba(252,165,165,.2); }
 
-  /* tabs */
+  /* Progress bars (legacy) */
+  .progress {
+    background: rgba(255,255,255,.06); border-radius: 999px; height: 6px;
+    overflow: hidden;
+  }
+  .progress > div {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--c-protein), var(--c-protein-deep));
+    box-shadow: 0 0 8px var(--c-protein-glow);
+    border-radius: 999px;
+    transition: width .6s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ===================== Floating action button ===================== */
+  .fab {
+    position: fixed; right: 28px; bottom: 108px;
+    width: 60px; height: 60px; border-radius: 30px;
+    background: linear-gradient(135deg, var(--c-protein), var(--c-meds));
+    border: none; cursor: pointer; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 30px var(--c-meds-glow),
+                0 0 0 6px rgba(244,114,182,.08);
+    z-index: 35;
+    transition: transform .15s ease;
+  }
+  .fab svg { width: 24px; height: 24px; }
+  .fab:active { transform: scale(.92); }
+  .fab:hover { transform: scale(1.05); }
+
+  /* ===================== Tab bar ===================== */
   nav.tabs {
-    position: fixed; bottom: 0; left:0; right:0; background:var(--surface);
-    border-top:1px solid var(--border); display:flex; z-index: 40;
-    padding-bottom: env(safe-area-inset-bottom);
-    backdrop-filter: blur(10px);
+    position: fixed; bottom: 28px; left: 16px; right: 16px;
+    padding: 6px; border-radius: 32px;
+    background: rgba(26,20,48,.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,.06);
+    display: flex; justify-content: space-around; align-items: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5);
+    z-index: 40; max-width: 540px; margin: 0 auto;
+    padding-bottom: calc(6px + env(safe-area-inset-bottom) * .25);
   }
   nav.tabs button {
-    flex:1; background:transparent; border:none; color:var(--text-dim);
-    padding: 10px 4px 12px; font-size:10px; cursor:pointer;
-    display:flex; flex-direction:column; align-items:center; gap:4px;
-    letter-spacing: .03em;
+    flex: 1; padding: 12px 0; border-radius: 26px;
+    background: transparent; border: none;
+    color: var(--dim); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
   }
-  nav.tabs button.active { color: var(--primary); }
-  nav.tabs svg { width: 22px; height: 22px; }
+  nav.tabs button svg { width: 22px; height: 22px; stroke-width: 1.8; }
+  nav.tabs button.active {
+    background: var(--c-protein-tint);
+    color: var(--c-protein);
+  }
   nav.tabs button.active svg { stroke-width: 2.2; }
 
-  /* big floating action button */
-  .fab {
-    position: fixed; right: 18px; bottom: calc(78px + env(safe-area-inset-bottom));
-    width: 60px; height: 60px; border-radius: 50%;
-    background: var(--grad); color: #fff; border: none;
-    display:flex; align-items:center; justify-content:center;
-    box-shadow: 0 10px 28px rgba(59,130,246,.45), 0 4px 10px rgba(6,182,212,.3);
-    cursor:pointer; z-index: 35;
-    transition: transform .15s ease, box-shadow .2s ease;
-  }
-  .fab svg { width: 26px; height: 26px; }
-  .fab:hover { transform: scale(1.05); }
-  .fab:active { transform: scale(.92); }
-
-  /* Per-tab accent colors when active */
-  nav.tabs button[data-tab="dashboard"].active { color: var(--c-cal); }
-  nav.tabs button[data-tab="meds"].active      { color: var(--c-meds); }
-  nav.tabs button[data-tab="history"].active   { color: var(--c-history); }
-  nav.tabs button[data-tab="settings"].active  { color: var(--c-settings); }
-  nav.tabs button.active { background: linear-gradient(180deg, transparent, rgba(59,130,246,.06)); }
-
-  /* modal */
+  /* ===================== Modals (reskinned, keep layout) ===================== */
   .modal-bg {
-    position: fixed; inset:0; background: rgba(0,0,0,.5);
-    display:none; align-items:flex-end; justify-content:center; z-index: 50;
+    position: fixed; inset: 0; background: rgba(0,0,0,.6);
+    display: none; align-items: flex-end; justify-content: center; z-index: 50;
+    backdrop-filter: blur(4px);
   }
-  .modal-bg.show { display:flex; }
+  .modal-bg.show { display: flex; }
   .modal {
-    background: var(--surface); width: 100%; max-width:720px;
-    border-radius: 18px 18px 0 0; padding: 0 16px 16px; max-height: 90vh; overflow:auto;
-    border-top: 1px solid var(--border);
+    background: var(--surface);
+    width: 100%; max-width: 540px;
+    border-radius: 28px 28px 0 0;
+    padding: 0 16px 16px;
+    max-height: 90vh; overflow: auto;
     animation: slideUp .25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: .6; }
+    to   { transform: translateY(0); opacity: 1; }
   }
   .modal-head {
     position: sticky; top: 0; z-index: 5;
@@ -352,300 +745,441 @@
     padding: 16px 0 12px; margin-bottom: 4px;
     border-bottom: 1px solid var(--border);
   }
-  .modal-head h3 { margin: 0; }
-  @keyframes slideUp { from { transform: translateY(20px); opacity:.6; } to { transform: translateY(0); opacity:1;} }
+  .modal-head h3 { margin: 0; font-size: 18px; color: var(--text); }
+  .icon-btn {
+    width: 38px; height: 38px; border-radius: 12px;
+    background: rgba(255,255,255,.05); border: 1px solid var(--border);
+    color: var(--text);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; padding: 0;
+  }
+  .icon-btn svg { width: 18px; height: 18px; }
+
+  /* Food modal: search + scan */
+  .search-wrap { position: relative; margin-top: 12px; }
+  .search-wrap .search-ico {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    width: 18px; height: 18px; color: var(--dim); pointer-events: none;
+  }
+  .search-wrap input { padding-left: 42px; padding-right: 56px; }
+  .cam-btn {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--c-protein), var(--c-meds));
+    color: #fff; border: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 10px var(--c-meds-glow);
+  }
+  .cam-btn svg { width: 18px; height: 18px; }
+  .cam-btn:active { transform: translateY(-50%) scale(.93); }
+
+  .scan-box {
+    margin-top: 12px; padding: 14px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+  }
+  .scan-box-head {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--c-meds); font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .scan-box-head svg { width: 16px; height: 16px; }
+
+  .scan-status {
+    margin-top: 10px; padding: 12px; border-radius: 14px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; font-size: 14px;
+  }
+  .scan-status.error { border-color: rgba(252,165,165,.3); color: var(--danger-soft); }
+  .spinner {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.1);
+    border-top-color: var(--c-protein);
+    animation: spin .7s linear infinite; flex: 0 0 18px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .food-list { margin-top: 12px; max-height: 55vh; overflow: auto; }
+  .food-section-head {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--dim); padding: 10px 4px 6px; font-weight: 700;
+  }
+  .food-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px; border-radius: 14px; cursor: pointer;
+    transition: background .15s ease;
+  }
+  .food-row:hover { background: rgba(255,255,255,.04); }
+  .food-row .nm { font-weight: 500; font-size: 15px; color: var(--text); }
+  .food-row .mac { font-size: 12px; color: var(--dim); margin-top: 2px; }
+  .food-row .mac .pp { color: var(--c-protein); font-weight: 500; }
+  .food-row .add-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-protein), var(--c-meds));
+    color: #fff; border: none; flex: 0 0 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 4px 10px var(--c-meds-glow);
+  }
+  .food-row .add-btn svg { width: 16px; height: 16px; }
+  .food-row.expanded { background: rgba(255,255,255,.04); }
+  .food-row-expand {
+    padding: 0 12px 14px; background: rgba(255,255,255,.04);
+    border-radius: 0 0 14px 14px; margin-bottom: 4px;
+  }
+  .food-row-expand .grid3 { gap: 8px; }
+  .food-row-expand .preview {
+    font-size: 12px; color: var(--dim); padding: 8px 0; text-align: center;
+  }
+  .custom-form { padding-top: 4px; }
+
+  /* History / Settings / shared bits (mostly old markup) */
+  .cal { display: grid; grid-template-columns: repeat(7,1fr); gap: 6px; }
+  .cal .d {
+    aspect-ratio: 1; border-radius: 12px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 12px; cursor: pointer; color: var(--text);
+  }
+  .cal .d.empty { visibility: hidden; }
+  .cal .d.today { border-color: var(--c-protein); }
+  .cal .d.has {
+    background: color-mix(in srgb, var(--c-protein) 22%, transparent);
+  }
+  canvas { width: 100% !important; height: 220px !important; }
+
+  /* Settings — range row, med editor */
+  .range-row { display: flex; align-items: center; gap: 8px; }
+  .range-row input { flex: 1; min-width: 0; }
+  .range-dash { color: var(--dim); font-size: 13px; flex: 0 0 auto; }
+  .med-edit {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 12px; margin-bottom: 10px;
+  }
+  .section-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--dim); font-weight: 700;
+    display: flex; align-items: center; gap: 6px;
+  }
 
   .checkbox-row {
-    display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
   }
-  .checkbox-row:last-child { border-bottom:none; }
-  .checkbox-row > div { min-width: 0; }   /* let flex children shrink instead of overflowing */
-
-  /* min–max range input row */
-  .range-row { display:flex; align-items:center; gap:8px; }
-  .range-row input { flex:1; min-width:0; }
-  .range-dash { color: var(--text-dim); font-size:13px; flex:0 0 auto; }
-
-  /* medication editor cards in Settings */
-  .med-edit {
-    background: var(--surface-2); border: 1px solid var(--border);
-    border-radius: 12px; padding: 12px; margin-bottom: 10px;
-  }
-  .checkbox-row .meta { color:var(--text-dim); font-size:12px;}
+  .checkbox-row:last-child { border-bottom: none; }
+  .checkbox-row > div { min-width: 0; }
   .check {
-    width:28px; height:28px; border-radius:8px; border:2px solid var(--border);
-    display:inline-flex; align-items:center; justify-content:center;
-    cursor:pointer; user-select:none; flex:0 0 28px;
+    width: 28px; height: 28px; border-radius: 8px;
+    border: 2px solid var(--border);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; user-select: none; flex: 0 0 28px;
   }
-  .check.on { background: var(--good); border-color: var(--good); color:#fff; }
-  .check.on::after { content: "✓"; font-weight:700; }
-  .check.med.on { background: linear-gradient(135deg,#7c3aed,#a78bfa); border-color: transparent; box-shadow: 0 4px 14px rgba(167,139,250,.35); }
+  .check.on { background: var(--c-mood); border-color: var(--c-mood); color: var(--bg); }
+  .check.on::after { content: "✓"; font-weight: 700; }
 
-  /* schedule */
-  .timeline { position:relative; padding-left: 18px; }
-  .timeline::before { content:""; position:absolute; left:6px; top:6px; bottom:6px; width:2px; background:var(--border); }
-  .tl-item { position:relative; padding: 6px 0 14px; }
-  .tl-item::before {
-    content:""; position:absolute; left:-15px; top:10px; width:10px; height:10px;
-    border-radius:50%; background: var(--primary); border:2px solid var(--surface);
-  }
-  .tl-time { font-size:12px; color:var(--text-dim); }
-
-  /* water */
-  .glasses { display:flex; gap:6px; flex-wrap:wrap; margin: 10px 0; }
-  .glass { width: 28px; height: 38px; border-radius:4px 4px 8px 8px;
-    background: var(--surface-2); border:1px solid var(--border); position:relative; overflow:hidden;
-  }
-  .glass.fill::after { content:""; position:absolute; left:0; right:0; bottom:0;
-    background: linear-gradient(180deg,var(--primary-2),var(--primary)); height:80%; }
-
-  /* slider */
-  input[type=range] { width:100%; }
-
-  /* calendar */
-  .cal { display:grid; grid-template-columns: repeat(7,1fr); gap:6px; }
-  .cal .d { aspect-ratio:1; border-radius:8px; background:var(--surface-2); border:1px solid var(--border);
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    font-size:12px; cursor:pointer; }
-  .cal .d.empty { visibility:hidden; }
-  .cal .d.today { border-color:var(--primary); }
-  .cal .d.has { background: color-mix(in srgb, var(--primary) 25%, var(--surface-2)); }
-
-  .small { font-size: 12px; color: var(--text-dim); }
-  .hidden { display:none !important; }
-
-  .quick-foods { display:flex; flex-wrap:wrap; gap:6px; }
-  .quick-foods .qf { font-size:13px; padding: 6px 10px; border-radius:999px;
-    background:var(--surface-2); border:1px solid var(--border); cursor:pointer; }
-  .quick-foods .qf:hover { border-color: var(--primary); }
-
+  /* Toast */
   .toast {
-    position: fixed; bottom: 88px; left:50%; transform:translateX(-50%);
-    background: var(--text); color: var(--bg);
-    padding: 10px 14px; border-radius: 999px; font-size: 13px;
-    opacity:0; transition: opacity .2s ease; z-index: 80; pointer-events:none;
+    position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%);
+    background: var(--surface); color: var(--text);
+    padding: 10px 16px; border-radius: 999px;
+    font-size: 13px; opacity: 0;
+    transition: opacity .2s ease;
+    z-index: 80; pointer-events: none;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
   }
-  .toast.show { opacity: .95; }
+  .toast.show { opacity: 1; }
 
-  details summary { cursor:pointer; padding:6px 0; }
-
-  canvas { width:100% !important; height: 220px !important; }
+  /* Celebration */
+  .confetti-layer {
+    position: fixed; inset: 0; pointer-events: none; z-index: 100; overflow: hidden;
+  }
+  .confetti {
+    position: absolute; width: 10px; height: 14px; top: -20px;
+    animation: fall linear forwards; will-change: transform, opacity;
+  }
+  @keyframes fall {
+    0%   { transform: translate3d(0,-20px,0) rotate(0deg); opacity: 1; }
+    100% { transform: translate3d(var(--dx),105vh,0) rotate(720deg); opacity: .9; }
+  }
+  .celebrate-banner {
+    position: fixed; top: 30%; left: 50%;
+    transform: translate(-50%, -50%) scale(.5);
+    background: linear-gradient(135deg, var(--c-protein), var(--c-meds));
+    color: #fff; padding: 18px 28px; border-radius: 22px;
+    font-size: 18px; font-weight: 600; letter-spacing: -.01em;
+    box-shadow: 0 10px 40px var(--c-meds-glow);
+    z-index: 101; opacity: 0;
+    animation: pop .6s cubic-bezier(.34,1.56,.64,1) forwards,
+               fadeOut .4s 1.6s ease forwards;
+    text-align: center; max-width: 80%;
+  }
+  @keyframes pop {
+    0%   { opacity: 0; transform: translate(-50%,-50%) scale(.3); }
+    100% { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  }
+  @keyframes fadeOut {
+    to { opacity: 0; transform: translate(-50%,-60%) scale(.95); }
+  }
 
 </style>
 </head>
 <body>
 
-<header class="appbar">
-  <div style="flex:1">
-    <div class="sub" id="todayLabel"></div>
-    <h1 id="pageTitle">Hi, Lele</h1>
-  </div>
-</header>
-
 <main>
+
+  <!-- ============ Status header ============ -->
+  <header class="status-header" id="statusHeader">
+    <div class="sh-date">
+      <span class="sh-weekday" id="todayLabel"></span>
+      <span class="sh-day" id="pageTitle">Today</span>
+    </div>
+    <div class="sh-pill" id="statusPill" data-kind="mood">
+      <span class="sh-pill-dot"></span>
+      <span class="sh-pill-text">On track</span>
+    </div>
+  </header>
 
   <!-- ============ DASHBOARD ============ -->
   <section id="view-dashboard">
 
-    <!-- Streak chips -->
-    <div class="streaks">
-      <div class="streak-chip" id="chipProteinStreak">
-        <svg viewBox="0 0 24 24" fill="currentColor" style="color:var(--c-streak)"><path d="M13 2c0 4-3 5-3 9a3 3 0 1 0 6 0c0-1-1-2-1-3 2 1 4 3 4 7a7 7 0 0 1-14 0c0-5 5-7 8-13z"/></svg>
-        <div><div class="streak-n" id="proteinStreakN">0</div><div class="streak-l">protein</div></div>
-      </div>
-      <div class="streak-chip" id="chipMedsStreak">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="color:var(--c-meds)"><polyline points="20 6 9 17 4 12"/></svg>
-        <div><div class="streak-n" id="medsStreakN">0</div><div class="streak-l">meds</div></div>
-      </div>
-      <div class="streak-chip" id="chipQuitStreak">
-        <svg viewBox="0 0 24 24" fill="currentColor" style="color:var(--c-journal)"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm-2 14.5L5.5 12l1.4-1.4 3.1 3.1 6.6-6.6 1.4 1.4z"/></svg>
-        <div><div class="streak-n" id="quitStreakN">0</div><div class="streak-l">smoke-free</div></div>
-      </div>
-    </div>
-
-    <!-- Hero: 3 colorful stats -->
-    <div class="card hero">
-      <div class="rings">
-        <div class="ring-stat">
-          <div class="ring-num" style="color:var(--c-protein)"><span id="proteinNow">0</span><small>/<span id="proteinTarget">80</span>g</small></div>
-          <div class="ring-label">Protein</div>
+    <!-- Protein hero ring -->
+    <div class="hero-protein">
+      <span class="glow"></span>
+      <div class="lab">
+        <div class="lab-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M6 4h7a4 4 0 0 1 0 8H6M6 12h8a4 4 0 0 1 0 8H6"/></svg>
         </div>
-        <div class="ring-stat">
-          <div class="ring-num" style="color:var(--c-cal)"><span id="calNow">0</span><small>/<span id="calTarget">1800</span></small></div>
-          <div class="ring-label">Calories</div>
-        </div>
-        <div class="ring-stat">
-          <div class="ring-num" style="color:var(--c-water)"><span id="waterNow">0</span><small>/<span id="waterTarget">2500</span>ml</small></div>
-          <div class="ring-label">Water</div>
+        <span class="lab-text">Protein</span>
+      </div>
+      <div class="ring-wrap">
+        <svg viewBox="0 0 220 220">
+          <defs>
+            <linearGradient id="proteinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#c4b5fd"/>
+              <stop offset="100%" stop-color="#a78bfa"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-bg" cx="110" cy="110" r="101" stroke-width="18" fill="none"/>
+          <circle id="proteinRingArc" class="ring-arc" cx="110" cy="110" r="101"
+                  stroke="url(#proteinGrad)" stroke-width="18" fill="none"
+                  stroke-dasharray="634.6" stroke-dashoffset="634.6" stroke-linecap="round"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-num" id="proteinNow">0</div>
+          <div class="ring-sub">grams to go</div>
         </div>
       </div>
-      <div class="ring-bars">
-        <div class="progress slim protein" id="proteinBar"><div></div></div>
-        <div class="progress slim cal" id="calBar"><div></div></div>
-        <div class="progress slim water" id="waterBar"><div></div></div>
+      <div class="suggestion" id="proteinHint">
+        <span class="sug-emoji">💡</span>
+        <span class="sug-text">Whey shake fills the gap</span>
       </div>
     </div>
 
-    <!-- Quick water -->
-    <div class="card tight">
-      <div class="row between" style="margin-bottom:8px">
-        <span class="section-title" style="color:var(--c-water); display:inline-flex; align-items:center; gap:6px">
-          <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px"><path d="M12 2.5c-3 4-7 8-7 12a7 7 0 0 0 14 0c0-4-4-8-7-12z"/></svg>
-          Water
-        </span>
-        <span class="small">Sip between meals</span>
+    <!-- Twin stat cards: water + calories -->
+    <div class="twin-cards">
+      <div class="stat-card stat-water" onclick="openWaterModal()">
+        <span class="glow"></span>
+        <div class="stat-inner">
+          <div class="stat-chip">
+            <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7c-3 4-7 8-7 12a7 7 0 0 0 14 0c0-4-4-8-7-12z"/></svg>
+          </div>
+          <div class="stat-value"><span id="waterNow">0</span><span class="stat-unit">ml</span></div>
+          <div class="stat-of">of <span id="waterTarget">2500</span>ml</div>
+          <div class="stat-bar" id="waterBar"><div></div></div>
+        </div>
       </div>
-      <div class="quick-row">
-        <button class="quick water" onclick="addWater(250)">+250</button>
-        <button class="quick water" onclick="addWater(500)">+500</button>
-        <button class="quick water" onclick="addWater(750)">+750</button>
-        <button class="quick ghost" onclick="openWaterModal()">Custom</button>
+      <div class="stat-card stat-cal" onclick="openFoodModal()">
+        <span class="glow"></span>
+        <div class="stat-inner">
+          <div class="stat-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12.5C14 9.46 16.46 7 19.5 7M8.5 21C5.5 21 3 18.5 3 15c0-3.5 2.5-5 4-7 1.5-2 1.5-4 1.5-6 3 1 6 4 6 8 3 0 5 2.5 5 5.5 0 3.5-2.5 5.5-5.5 5.5z"/></svg>
+          </div>
+          <div class="stat-value"><span id="calNow">0</span></div>
+          <div class="stat-of">of <span id="calTarget">1900</span> kcal</div>
+          <div class="stat-bar" id="calBar"><div></div></div>
+        </div>
       </div>
     </div>
 
-    <!-- Today's meals -->
-    <div class="card tight">
-      <div class="row between" style="margin-bottom:8px">
-        <span class="section-title" style="color:var(--c-cal)">Today's meals</span>
-        <span class="small" id="mealsCount">0 entries</span>
-      </div>
-      <div id="mealsList"></div>
+    <!-- Water quick-add droplets -->
+    <div class="water-drops">
+      <button class="drop drop-s" onclick="addWater(250)">
+        <span class="drop-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.7c-3 4-7 8-7 12a7 7 0 0 0 14 0c0-4-4-8-7-12z"/></svg></span>
+        <span class="drop-label">+250</span>
+      </button>
+      <button class="drop drop-m" onclick="addWater(500)">
+        <span class="drop-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.7c-3 4-7 8-7 12a7 7 0 0 0 14 0c0-4-4-8-7-12z"/></svg></span>
+        <span class="drop-label">+500</span>
+      </button>
+      <button class="drop drop-l" onclick="addWater(750)">
+        <span class="drop-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.7c-3 4-7 8-7 12a7 7 0 0 0 14 0c0-4-4-8-7-12z"/></svg></span>
+        <span class="drop-label">+750</span>
+      </button>
+      <button class="drop drop-custom" onclick="openWaterModal()" aria-label="Custom amount">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
     </div>
 
-    <!-- Quick check-in (replaces journal tab) -->
-    <div class="card tight">
-      <div class="row between" style="margin-bottom:10px">
-        <span class="section-title" style="color:var(--c-journal)">Quick check-in</span>
+    <!-- Meal bento (renderMealBento writes here, replaces old list) -->
+    <div class="bento" id="mealsList"></div>
+    <span id="mealsCount" hidden></span>
+
+    <!-- Today's entries (expanded view for edit/delete) -->
+    <details class="entries-collapse">
+      <summary>All meal entries (today)</summary>
+      <div id="todayEntries"></div>
+    </details>
+
+    <!-- Mood faces (auto-save on tap) -->
+    <div class="mood-row">
+      <button class="mood-face chip" data-feel="great" onclick="quickFeel('great', this)">
+        <span class="emoji">😄</span><span class="label">Great</span>
+      </button>
+      <button class="mood-face chip" data-feel="ok" onclick="quickFeel('ok', this)">
+        <span class="emoji">🙂</span><span class="label">OK</span>
+      </button>
+      <button class="mood-face chip" data-feel="rough" onclick="quickFeel('rough', this)">
+        <span class="emoji">😣</span><span class="label">Rough</span>
+      </button>
+      <button class="mood-face chip" data-feel="pain" onclick="quickFeel('pain', this)">
+        <span class="emoji">🤕</span><span class="label">Pain</span>
+      </button>
+    </div>
+
+    <!-- Smoke card -->
+    <div class="smoke-card">
+      <button class="smoke-btn chip" data-smoke="yes" onclick="logSmoke(this)">
+        🚬 Smoked today
+      </button>
+    </div>
+
+    <!-- Streak badge -->
+    <div class="streak-badge" id="streakBadge">
+      <span class="sb-glow"></span>
+      <div class="sb-circle">🔥</div>
+      <div class="sb-text">
+        <div class="sb-title" id="streakTitle">Start your streak</div>
+        <div class="sb-sub" id="streakSub">log today to begin</div>
+      </div>
+      <svg class="sb-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+
+    <!-- Check-in details (energy slider, notes, etc) -->
+    <details class="checkin-details">
+      <summary>More details (energy, BM, notes)</summary>
+      <div class="checkin-inner">
+        <label>Energy <span id="energyVal">5</span>/10</label>
+        <input type="range" min="1" max="10" value="5" id="energy" />
+
+        <label>Stomach burning</label>
+        <select id="burning">
+          <option value="no">No</option>
+          <option value="mild">Mild</option>
+          <option value="moderate">Moderate</option>
+          <option value="severe">Severe</option>
+        </select>
+
+        <label>Bowel movement</label>
+        <div class="grid2">
+          <select id="bmYN"><option value="no">No</option><option value="yes">Yes</option></select>
+          <select id="bristol">
+            <option value="">— Bristol —</option>
+            <option value="1">1 Hard lumps</option>
+            <option value="2">2 Lumpy</option>
+            <option value="3">3 Cracked</option>
+            <option value="4">4 Smooth (ideal)</option>
+            <option value="5">5 Soft blobs</option>
+            <option value="6">6 Mushy</option>
+            <option value="7">7 Liquid</option>
+          </select>
+        </div>
+
+        <label>Notes</label>
+        <textarea id="notes" placeholder="Anything to remember…"></textarea>
+
+        <button class="btn primary full" style="margin-top:12px" onclick="saveJournal()">Save check-in</button>
         <span class="small" id="checkinSaved"></span>
       </div>
-      <div class="row" style="gap:10px; align-items:center; margin-bottom:10px">
-        <span class="small" style="min-width:60px">Energy</span>
-        <input type="range" min="1" max="10" value="5" id="energy" style="flex:1" />
-        <span class="ring-num" style="font-size:18px; min-width:28px; text-align:right" id="energyVal">5</span>
-      </div>
-      <div class="row" style="gap:8px; flex-wrap:wrap">
-        <button class="chip" data-feel="great" onclick="quickFeel('great', this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-          Great
-        </button>
-        <button class="chip" data-feel="ok" onclick="quickFeel('ok', this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-          OK
-        </button>
-        <button class="chip" data-feel="rough" onclick="quickFeel('rough', this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-          Rough
-        </button>
-        <button class="chip" data-feel="pain" onclick="quickFeel('pain', this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Pain
-        </button>
-        <button class="chip" data-smoke="yes" onclick="logSmoke(this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="14" width="18" height="4" rx="1"/><path d="M18 8c2 0 2 2 2 4M22 14V8"/></svg>
-          Smoked
-        </button>
-      </div>
-      <details style="margin-top:10px">
-        <summary class="small">More details (notes, BM, etc)</summary>
-        <div style="margin-top:10px">
-          <label>Stomach burning</label>
-          <select id="burning"><option value="no">No</option><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select>
-          <label style="margin-top:8px">Bowel movement</label>
-          <div class="grid2">
-            <select id="bmYN"><option value="no">No</option><option value="yes">Yes</option></select>
-            <select id="bristol"><option value="">— Bristol —</option><option value="1">1 Hard lumps</option><option value="2">2 Lumpy</option><option value="3">3 Cracked</option><option value="4">4 Smooth (ideal)</option><option value="5">5 Soft blobs</option><option value="6">6 Mushy</option><option value="7">7 Liquid</option></select>
-          </div>
-          <label style="margin-top:8px">Notes</label>
-          <textarea id="notes" placeholder="Anything to remember…"></textarea>
-        </div>
-      </details>
-      <button class="btn primary full" style="margin-top:10px" onclick="saveJournal()">Save check-in</button>
-    </div>
-
-    <!-- Macro details, collapsed -->
-    <details class="card tight">
-      <summary class="section-title">More macros</summary>
-      <div class="grid3" style="margin-top:10px">
-        <div class="metric"><span class="t">Carbs</span><span class="v"><span id="carbsNow">0</span><small> g</small></span></div>
-        <div class="metric"><span class="t">Fat</span><span class="v"><span id="fatNow">0</span><small> g</small></span></div>
-        <div class="metric"><span class="t">Fiber</span><span class="v"><span id="fiberNow">0</span><small> g</small></span></div>
-      </div>
     </details>
+
+    <!-- Legacy hidden compatibility nodes referenced by existing JS -->
+    <span id="proteinTarget" hidden>80</span>
+    <div id="proteinBar" hidden><div></div></div>
+    <span id="carbsNow" hidden></span>
+    <span id="fatNow" hidden></span>
+    <span id="fiberNow" hidden></span>
+    <span id="proteinStreakN" hidden>0</span>
+    <span id="medsStreakN" hidden>0</span>
+    <span id="quitStreakN" hidden>0</span>
+    <span id="chipProteinStreak" hidden></span>
+    <span id="chipMedsStreak" hidden></span>
+    <span id="chipQuitStreak" hidden></span>
 
   </section>
 
   <!-- ============ MEDS ============ -->
   <section id="view-meds" class="hidden">
 
-    <!-- Meds progress hero -->
-    <div class="card hero" style="background: linear-gradient(135deg, rgba(167,139,250,.12), rgba(96,165,250,.08));">
-      <div class="row between" style="margin-bottom:8px">
-        <span class="section-title" style="color:var(--c-meds); display:inline-flex; align-items:center; gap:6px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="9" width="20" height="6" rx="3"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
-          Today's meds
-        </span>
-        <span class="ring-num" style="color:var(--c-meds); font-size:18px"><span id="medsTakenN">0</span><small>/<span id="medsTotalN">6</small></span></span>
-      </div>
-      <div class="progress slim" id="medsProgressBar" style="--bar:var(--c-meds)"><div style="background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div></div>
+    <!-- Progress dashes -->
+    <div class="meds-progress">
+      <div class="dashes" id="medsDashes"></div>
+      <span class="meds-progress-text"><span id="medsTakenN">0</span> of <span id="medsTotalN">6</span> taken</span>
     </div>
 
-    <div class="card tight">
-      <div id="medsList"></div>
-      <div class="small" style="margin-top:8px; text-align:center">Resets automatically at midnight</div>
+    <!-- "Next up" hero -->
+    <div id="medsNextUp" class="next-up-hero"></div>
+
+    <!-- Med list (rows generated by JS) -->
+    <div id="medsList" class="meds-list"></div>
+
+    <!-- Day at a glance -->
+    <div class="timeline-wrap">
+      <h3 class="card-title">Day at a glance</h3>
+      <div class="timeline" id="schedule"></div>
     </div>
 
-    <div class="card tight">
-      <span class="section-title" style="color:var(--c-history); display:inline-flex; align-items:center; gap:6px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Daily schedule
-      </span>
-      <div class="timeline" id="schedule" style="margin-top:10px"></div>
-    </div>
+    <!-- Legacy hidden compat -->
+    <div id="medsProgressBar" hidden><div></div></div>
+
   </section>
-
 
   <!-- ============ HISTORY ============ -->
   <section id="view-history" class="hidden">
-    <div class="card tight">
-      <div class="row between" style="margin-bottom:10px">
-        <span class="section-title" style="color:var(--c-history); display:inline-flex; align-items:center; gap:6px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
-          <span id="calMonthTitle">Month</span>
-        </span>
-        <div class="row" style="gap:6px">
+    <div class="card">
+      <div class="row between">
+        <h2 style="margin:0" id="calMonthTitle">Month</h2>
+        <div class="row">
           <button class="btn sm" onclick="calMove(-1)">‹</button>
           <button class="btn sm" onclick="calMove(1)">›</button>
         </div>
       </div>
-      <div class="cal" id="calendar"></div>
-      <div class="small" style="margin-top:8px; text-align:center">Tap a day to see details</div>
+      <div class="cal" id="calendar" style="margin-top:12px"></div>
+      <div class="small" style="margin-top:8px">Tap a day to see details.</div>
     </div>
 
-    <div class="card tight">
-      <span class="section-title" style="color:var(--c-cal); display:inline-flex; align-items:center; gap:6px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-6"/></svg>
-        Weekly summary
-      </span>
-      <div id="weekSummary" class="small" style="margin-top:10px"></div>
+    <div class="card">
+      <h2>Weekly summary</h2>
+      <div id="weekSummary" class="small"></div>
     </div>
 
-    <div class="card tight">
-      <span class="section-title" style="color:var(--c-protein); display:inline-flex; align-items:center; gap:6px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Last 30 days
-      </span>
-      <canvas id="trendsChart" style="margin-top:10px"></canvas>
+    <div class="card">
+      <h2>Last 30 days</h2>
+      <canvas id="trendsChart"></canvas>
     </div>
   </section>
 
   <!-- ============ SETTINGS ============ -->
   <section id="view-settings" class="hidden">
-    <div class="card tight">
-      <span class="section-title" style="color:var(--c-cal); display:inline-flex; align-items:center; gap:6px; margin-bottom:10px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Targets & schedule
-      </span>
-      <label style="margin-top:6px">Wake-up time</label>
+
+    <div class="card">
+      <span class="section-title" style="color:var(--c-protein)">Targets &amp; schedule</span>
+
+      <label style="margin-top:12px">Wake-up time</label>
       <input type="time" id="setWake" />
 
       <label style="margin-top:12px">Daily protein (grams)</label>
@@ -668,35 +1202,26 @@
       <button class="btn primary full" style="margin-top:14px" onclick="saveSettings()">Save settings</button>
     </div>
 
-    <div class="card tight">
-      <span class="section-title" style="color:var(--c-meds); display:inline-flex; align-items:center; gap:6px; margin-bottom:10px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="9" width="20" height="6" rx="3"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
-        Medications & supplements
-      </span>
-      <div id="medsTemplate"></div>
-      <button class="btn full" style="margin-top:8px" onclick="addMedTemplate()">+ Add medication</button>
+    <div class="card">
+      <span class="section-title" style="color:var(--c-meds)">Medications &amp; supplements</span>
+      <div id="medsTemplate" style="margin-top:12px"></div>
+      <button class="btn full" onclick="addMedTemplate()">+ Add medication</button>
     </div>
 
-    <div class="card tight">
-      <span class="section-title" style="color:var(--c-protein); display:inline-flex; align-items:center; gap:6px; margin-bottom:10px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        AI photo scan
-      </span>
-      <label style="margin-top:6px">Claude API key</label>
+    <div class="card">
+      <span class="section-title" style="color:var(--c-cal)">AI photo scan</span>
+      <label style="margin-top:12px">Claude API key</label>
       <input type="password" id="setApiKey" placeholder="sk-ant-..." autocomplete="off" />
       <div class="small" style="margin-top:6px">
-        Stored only on this device. Each scan costs ~$0.012 with Claude Sonnet 4.5 (~$2/mo at 5 scans/day).
-        <a href="https://console.anthropic.com" target="_blank" style="color:var(--primary)">Get a key</a>
+        Stored only on this device. Each scan costs ~$0.005 with Claude.
+        <a href="https://console.anthropic.com" target="_blank" style="color:var(--c-protein)">Get a key</a>
       </div>
       <button class="btn full" style="margin-top:8px" onclick="saveApiKey()">Save key</button>
     </div>
 
-    <div class="card tight">
-      <span class="section-title" style="color:var(--c-history); display:inline-flex; align-items:center; gap:6px; margin-bottom:10px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Data
-      </span>
-      <div class="grid2">
+    <div class="card">
+      <span class="section-title" style="color:var(--c-water)">Data</span>
+      <div class="grid2" style="margin-top:12px">
         <button class="btn" onclick="exportData()">Export JSON</button>
         <button class="btn" onclick="document.getElementById('importFile').click()">Import JSON</button>
       </div>
@@ -708,35 +1233,34 @@
     </div>
 
     <div class="card">
-      <h2>About</h2>
-      <div class="small">Bari Tracker · personal post-bariatric daily tracker. All data is stored locally on this device.</div>
+      <span class="section-title">About</span>
+      <div class="small" style="margin-top:8px">
+        Bari Tracker · personal post-bariatric daily tracker. All data is stored locally on this device.
+      </div>
     </div>
+
   </section>
 
 </main>
 
-<!-- Floating add button -->
+<!-- FAB -->
 <button class="fab" onclick="openFoodModal()" aria-label="Add food">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
 </button>
 
-<!-- Bottom nav (4 tabs - journal folded into dashboard) -->
+<!-- Tab bar (icon-only) -->
 <nav class="tabs">
-  <button data-tab="dashboard" class="active" onclick="switchTab('dashboard')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-    Today
+  <button data-tab="dashboard" class="active" onclick="switchTab('dashboard')" aria-label="Today">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M8 2v4M16 2v4"/></svg>
   </button>
-  <button data-tab="meds" onclick="switchTab('meds')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="20" height="6" rx="3"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
-    Meds
+  <button data-tab="meds" onclick="switchTab('meds')" aria-label="Meds">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="20" height="6" rx="3"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
   </button>
-  <button data-tab="history" onclick="switchTab('history')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
-    History
+  <button data-tab="history" onclick="switchTab('history')" aria-label="History">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
   </button>
-  <button data-tab="settings" onclick="switchTab('settings')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-    Settings
+  <button data-tab="settings" onclick="switchTab('settings')" aria-label="Settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
   </button>
 </nav>
 
@@ -750,31 +1274,21 @@
       </button>
     </div>
 
-    <div class="search-wrap" style="margin-top:12px">
+    <div class="search-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-ico"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input id="foodSearch" placeholder="Search foods…" oninput="renderFoodList()" />
-    </div>
-
-    <!-- AI photo scan box -->
-    <div class="scan-box">
-      <div class="scan-box-head">
+      <button class="cam-btn" onclick="document.getElementById('foodPhoto').click()" aria-label="Scan food photo">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Scan a meal with a photo
-      </div>
-      <button class="btn primary full" onclick="document.getElementById('foodPhoto').click()">
-        Take / choose photo
       </button>
       <input type="file" id="foodPhoto" accept="image/*" capture="environment" class="hidden" onchange="scanFoodImage(event)" />
-      <div class="small" style="margin-top:6px; text-align:center">Just snap your plate — you can add a description after if it gets it wrong.</div>
     </div>
 
     <div id="scanStatus" class="scan-status hidden"></div>
 
-    <!-- Post-scan: refine with a description -->
     <div id="scanRefine" class="scan-box hidden" style="margin-top:8px">
       <div class="scan-box-head">Not quite right? Describe it and re-scan</div>
       <textarea id="scanHint" placeholder="e.g. 4 scrambled eggs with cheddar cheese, cooked in butter"></textarea>
-      <button class="btn primary full" onclick="rescanWithHint()">Re-analyze with description</button>
+      <button class="btn primary full" style="margin-top:8px" onclick="rescanWithHint()">Re-analyze with description</button>
     </div>
 
     <div id="foodPickList" class="food-list"></div>
@@ -797,7 +1311,7 @@
         <div><label>Fat</label><input id="cF" type="number" /></div>
         <div><label>Fiber</label><input id="cFi" type="number" /></div>
       </div>
-      <button class="btn primary full" style="margin-top:8px" onclick="addCustomFood()">Save & pick</button>
+      <button class="btn primary full" style="margin-top:8px" onclick="addCustomFood()">Save &amp; pick</button>
     </div>
   </div>
 </div>
@@ -836,13 +1350,13 @@
     <h3>Welcome, Lele</h3>
     <p class="small">Bari Tracker is a private daily log for your post-bypass routine. Everything stays on this device.</p>
     <ul class="small">
-      <li><strong>Today</strong> — log foods & water, track protein/calories/water, and do a quick check-in.</li>
-      <li><strong>Meds</strong> — daily checklist (omeprazole, multivitamin, calcium, omega-3) and your schedule.</li>
-      <li><strong>History</strong> — calendar of past days, weekly summary, 30-day trends.</li>
+      <li><strong>Today</strong> — log foods &amp; water, track progress, quick check-in.</li>
+      <li><strong>Meds</strong> — daily checklist with the most urgent dose surfaced first.</li>
+      <li><strong>History</strong> — calendar of past days, weekly summary, trends.</li>
       <li><strong>Settings</strong> — wake-up time, targets, meds, AI photo scan, export/import.</li>
     </ul>
-    <p class="small">Add to your iPhone home screen via Share → “Add to Home Screen” for an app-like experience.</p>
-    <button class="btn primary full" onclick="closeOnboard()">Let’s go</button>
+    <p class="small">Add to your iPhone home screen via Share → "Add to Home Screen" for an app-like experience.</p>
+    <button class="btn primary full" onclick="closeOnboard()">Let's go</button>
   </div>
 </div>
 
@@ -1937,6 +2451,511 @@ setInterval(()=>{
     setHeaderDate(); renderDashboard();
   }
 }, 60000);
+
+/* ============================================================
+   v2 Render Extensions
+   New helpers that populate the v2 redesigned markup.
+   Original render functions are wrapped, not replaced — all
+   existing behavior is preserved.
+============================================================ */
+
+// ---------- Status pill ----------
+function computeStatus() {
+  const s = state.settings;
+  const day = ensureDay();
+  const t = totalsForDay(day);
+  const now = new Date();
+  const nowMin = now.getHours()*60 + now.getMinutes();
+  const wake = wakeMinutes();
+  const minsSinceWake = nowMin - wake;
+
+  // 1. Overdue meds (30 min grace)
+  let overdue = 0;
+  state.meds.forEach(m => {
+    if (day.meds && day.meds[m.id]) return;
+    const due = wake + m.offset;
+    if (nowMin > due + 30) overdue++;
+  });
+  if (overdue > 0) {
+    return { label: overdue===1 ? '1 med overdue' : `${overdue} meds overdue`, kind: 'danger' };
+  }
+
+  // 2. Protein pace — within a 13.5h eating window
+  if (minsSinceWake > 60) {
+    const win = 13.5 * 60;
+    const pace = Math.max(0, Math.min(1, minsSinceWake / win));
+    const expected = s.proteinMin * pace;
+    if (t.p < expected - 8) {
+      return { label: 'Behind on protein', kind: 'cal' };
+    }
+  }
+
+  return { label: 'On track', kind: 'mood' };
+}
+function renderStatusPill() {
+  const el = $('statusPill');
+  if (!el) return;
+  const { label, kind } = computeStatus();
+  el.dataset.kind = kind;
+  const t = el.querySelector('.sh-pill-text');
+  if (t) t.textContent = label;
+}
+
+// ---------- Protein hero ring ----------
+function renderProteinRing() {
+  const s = state.settings;
+  const day = ensureDay();
+  const t = totalsForDay(day);
+  const goal = s.proteinMax;
+  const remaining = Math.max(0, goal - Math.round(t.p));
+  const pct = Math.min(1, t.p / goal);
+  const arc = $('proteinRingArc');
+  if (arc) {
+    const r = 101;
+    const C = 2 * Math.PI * r;
+    arc.setAttribute('stroke-dasharray', C);
+    arc.setAttribute('stroke-dashoffset', C * (1 - pct));
+  }
+  // The big number shows REMAINING grams (not consumed)
+  const numEl = $('proteinNow');
+  if (numEl) numEl.textContent = remaining;
+  // Suggestion pill
+  const hint = $('proteinHint');
+  if (hint) {
+    const span = hint.querySelector('.sug-text');
+    if (span) {
+      if (remaining <= 0) span.textContent = 'Protein goal hit!';
+      else if (remaining <= 12) span.textContent = 'Almost there';
+      else if (remaining <= 24) span.textContent = 'Greek yogurt fills the gap';
+      else span.textContent = 'Whey shake fills the gap';
+    }
+  }
+}
+
+// ---------- Stat-card progress bars ----------
+function renderStatBars() {
+  const s = state.settings;
+  const day = ensureDay();
+  const t = totalsForDay(day);
+  const setW = (id, val, goal) => {
+    const bar = $(id);
+    if (bar && bar.firstElementChild) {
+      bar.firstElementChild.style.width = Math.min(100, Math.round(val/goal*100)) + '%';
+    }
+  };
+  setW('waterBar', t.water, s.waterTarget);
+  setW('calBar',   t.kcal,  s.calMax);
+  setW('proteinBar', t.p, s.proteinMax);
+}
+
+// ---------- Meal bento ----------
+const MEAL_SLOTS = [
+  { id: 'breakfast', name: 'Breakfast', defaultGlyph: '🥣', c: 'protein' },
+  { id: 'snack',     name: 'Snack',     defaultGlyph: '✨', c: 'cal' },
+  { id: 'lunch',     name: 'Lunch',     defaultGlyph: '🍗', c: 'meds' },
+  { id: 'snack 2',   name: 'Snack',     defaultGlyph: '✨', c: 'mood' },
+  { id: 'dinner',    name: 'Dinner',    defaultGlyph: '✨', c: 'water' },
+];
+
+function glyphForFood(name) {
+  const n = (name||'').toLowerCase();
+  if (n.includes('egg')) return '🍳';
+  if (n.includes('chicken') || n.includes('turkey')) return '🍗';
+  if (n.includes('salmon') || n.includes('tuna') || n.includes('fish') || n.includes('sardine')) return '🐟';
+  if (n.includes('beef') || n.includes('steak')) return '🥩';
+  if (n.includes('yogurt') || n.includes('milk')) return '🥛';
+  if (n.includes('cheese') || n.includes('mozz') || n.includes('cheddar') || n.includes('cottage')) return '🧀';
+  if (n.includes('avocado')) return '🥑';
+  if (n.includes('apple')) return '🍎';
+  if (n.includes('banana')) return '🍌';
+  if (n.includes('berr')) return '🫐';
+  if (n.includes('orange')) return '🍊';
+  if (n.includes('bread')) return '🍞';
+  if (n.includes('pasta')) return '🍝';
+  if (n.includes('rice') || n.includes('quinoa')) return '🍚';
+  if (n.includes('pizza')) return '🍕';
+  if (n.includes('shake') || n.includes('whey') || n.includes('protein')) return '🥤';
+  if (n.includes('oats')) return '🥣';
+  if (n.includes('coffee')) return '☕';
+  if (n.includes('tea')) return '🍵';
+  return '🍽️';
+}
+
+let _preferredMeal = null;
+function addToSlot(slot) {
+  _preferredMeal = slot;
+  openFoodModal();
+}
+
+function renderMealBento() {
+  const day = ensureDay();
+  const list = $('mealsList');
+  if (!list) return;
+  list.innerHTML = '';
+  list.className = 'bento';
+  MEAL_SLOTS.forEach(slot => {
+    const items = day.foods.filter(x => x.meal === slot.id)
+                            .sort((a,b)=>a.time.localeCompare(b.time));
+    const card = document.createElement('button');
+    card.className = 'bento-card';
+    card.type = 'button';
+    if (items.length === 0) {
+      card.classList.add('empty');
+      card.innerHTML = `
+        <span class="bc-glow"></span>
+        <div class="bc-top">
+          <span class="bc-glyph dim">${slot.defaultGlyph}</span>
+          <span class="bc-time">—</span>
+        </div>
+        <div class="bc-bot">
+          <div class="bc-name">${slot.name}</div>
+          <div class="bc-empty">tap to add</div>
+        </div>`;
+    } else {
+      let p = 0, k = 0;
+      items.forEach(i => { p += i.p; k += i.kcal; });
+      const lead = items[items.length-1];
+      card.classList.add('c-' + slot.c);
+      card.innerHTML = `
+        <span class="bc-glow"></span>
+        <div class="bc-top">
+          <span class="bc-glyph">${glyphForFood(lead.name)}</span>
+          <span class="bc-time">${lead.time}</span>
+        </div>
+        <div class="bc-bot">
+          <div class="bc-name">${slot.name}</div>
+          <div class="bc-stats">
+            <span class="bc-p">${Math.round(p)}<small>g</small></span>
+            <span class="bc-k">· ${Math.round(k)} kcal</span>
+          </div>
+        </div>`;
+    }
+    card.onclick = () => addToSlot(slot.id);
+    list.appendChild(card);
+  });
+
+  // Also populate the collapsible entries list (for edit / delete access)
+  const ent = $('todayEntries');
+  if (ent) {
+    ent.innerHTML = '';
+    if (day.foods.length === 0) {
+      ent.innerHTML = '<div class="small ent-empty">No meals logged yet today.</div>';
+    } else {
+      MEAL_SLOTS.forEach(slot => {
+        const items = day.foods.filter(x => x.meal === slot.id)
+                                .sort((a,b)=>a.time.localeCompare(b.time));
+        if (items.length === 0) return;
+        const block = document.createElement('div');
+        block.className = 'ent-slot';
+        block.innerHTML = `<div class="ent-head">${slot.name}</div>`;
+        items.forEach(it => {
+          const row = document.createElement('div');
+          row.className = 'ent-row';
+          row.innerHTML = `
+            <div class="ent-info">
+              <div class="ent-nm">${it.name}</div>
+              <div class="ent-mac">${it.amount}g · ${it.time} · ${Math.round(it.kcal)} kcal · P${Math.round(it.p)}</div>
+            </div>
+            <div class="ent-actions">
+              <button class="icon-btn-sm" onclick="editFood('${it.id}')" aria-label="Edit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+              </button>
+              <button class="icon-btn-sm danger" onclick="deleteFood('${it.id}')" aria-label="Delete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>`;
+          block.appendChild(row);
+        });
+        ent.appendChild(block);
+      });
+    }
+  }
+}
+
+// ---------- Streak badge ----------
+function renderStreakBadgeV2() {
+  const p = proteinStreak();
+  const m = medsStreak();
+  const q = quitStreak();
+
+  // Mirror to hidden compat nodes (kept for any external readers)
+  if ($('proteinStreakN')) $('proteinStreakN').textContent = p;
+  if ($('medsStreakN'))    $('medsStreakN').textContent    = m;
+  if ($('quitStreakN'))    $('quitStreakN').textContent    = q;
+
+  const items = [
+    { n: p, type: 'protein', label: `${p}-day protein streak`,    sub: `${p}d protein` },
+    { n: m, type: 'meds',    label: `${m}-day meds streak`,       sub: `${m}d meds` },
+    { n: q, type: 'smoke',   label: `${q}-day smoke-free streak`, sub: `${q}d smoke-free` },
+  ].sort((a,b)=>b.n-a.n);
+  const top = items[0];
+  const tEl = $('streakTitle');
+  const sEl = $('streakSub');
+  if (tEl) tEl.textContent = top.n > 0 ? top.label : 'Start your streak';
+  if (sEl) {
+    const others = items.slice(1).filter(x => x.n > 0).map(x => x.sub).join(' · ');
+    sEl.textContent = others || (top.n > 0 ? 'keep it going' : 'log today to begin');
+  }
+}
+
+// ---------- Meds: progress dashes ----------
+function renderMedsProgressDashes() {
+  const wrap = $('medsDashes');
+  if (!wrap) return;
+  const day = ensureDay();
+  const total = state.meds.length;
+  const taken = Object.keys(day.meds||{}).length;
+  wrap.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dash' + (i < taken ? ' on' : '');
+    wrap.appendChild(d);
+  }
+}
+
+// ---------- Meds: pick next-relevant med (overdue > due-now > soon) ----------
+function nextDueMed() {
+  const day = ensureDay();
+  const now = new Date();
+  const nowMin = now.getHours()*60 + now.getMinutes();
+  const wake = wakeMinutes();
+  let pick = null, pickRank = Infinity;
+  // rank: 0 = overdue (longest first), 1 = due now (within ±30m), 2 = upcoming (nearest first)
+  state.meds.forEach(m => {
+    if (day.meds && day.meds[m.id]) return; // already taken
+    const due = wake + m.offset;
+    const delta = nowMin - due;
+    let rank;
+    if (delta > 30) rank = 0 - delta;           // overdue: more overdue = lower rank
+    else if (delta >= -30) rank = 1;            // due window
+    else rank = 2 + Math.abs(delta) / 60;       // upcoming: sooner wins
+    if (rank < pickRank) { pickRank = rank; pick = { med: m, delta }; }
+  });
+  return pick;
+}
+
+// ---------- Meds: "Next up" hero card ----------
+function renderMedsHero() {
+  const hero = $('medsNextUp');
+  if (!hero) return;
+  const next = nextDueMed();
+  if (!next) {
+    hero.innerHTML = `
+      <span class="nu-glow"></span>
+      <div class="nu-body">
+        <div class="nu-row">
+          <div class="nu-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="20" height="6" rx="3"/><line x1="12" y1="9" x2="12" y2="15"/></svg></div>
+          <span class="nu-label">All done</span>
+        </div>
+        <div class="nu-name">Everything taken</div>
+        <div class="nu-sub">Nice — every scheduled dose is in.</div>
+      </div>`;
+    return;
+  }
+  const { med, delta } = next;
+  const dueT = minutesToHHMM(wakeMinutes() + med.offset);
+  const fmtDelta = (mins) => {
+    const m = Math.round(mins);
+    if (m >= 60) return Math.floor(m/60) + 'h ' + (m%60) + 'm';
+    return m + 'm';
+  };
+  let statusPill;
+  if (delta > 30) {
+    statusPill = `<div class="nu-pill danger"><span class="nu-pill-dot"></span>Overdue ${fmtDelta(delta)}</div>`;
+  } else if (delta >= -30) {
+    statusPill = `<div class="nu-pill ok"><span class="nu-pill-dot"></span>Due now</div>`;
+  } else {
+    statusPill = `<div class="nu-pill ok"><span class="nu-pill-dot"></span>Due ${dueT}</div>`;
+  }
+  hero.innerHTML = `
+    <span class="nu-glow"></span>
+    <div class="nu-body">
+      <div class="nu-row">
+        <div class="nu-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="20" height="6" rx="3"/><line x1="12" y1="9" x2="12" y2="15"/></svg></div>
+        <span class="nu-label">Next up</span>
+        <span class="nu-spacer"></span>
+        ${statusPill}
+      </div>
+      <div class="nu-name">${med.name}</div>
+      <div class="nu-sub">${med.note || 'scheduled dose'} · ${dueT}</div>
+      <div class="nu-actions">
+        <button class="nu-take" onclick="takeMed('${med.id}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Take now
+        </button>
+        <button class="nu-skip" onclick="renderMedsHero()">Skip</button>
+      </div>
+    </div>`;
+}
+
+function takeMed(id) {
+  const day = ensureDay();
+  const now = new Date();
+  day.meds[id] = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  save();
+  renderMedsListV2();
+  renderMedsHero();
+  renderMedsProgressDashes();
+  renderStatusPill();
+  toast('Logged');
+}
+
+// ---------- Meds list (v2 pill rows) ----------
+function renderMedsListV2() {
+  const wrap = $('medsList');
+  if (!wrap) return;
+  const day = ensureDay();
+  const now = new Date();
+  const nowMin = now.getHours()*60 + now.getMinutes();
+  const wake = wakeMinutes();
+  const next = nextDueMed();
+  const nextId = next && next.med ? next.med.id : null;
+
+  wrap.className = 'meds-list';
+  wrap.innerHTML = '';
+  state.meds.forEach(med => {
+    const due = wake + med.offset;
+    const dueT = minutesToHHMM(due);
+    const taken = day.meds && day.meds[med.id];
+    const isTaken = !!taken;
+    const isOverdue = !isTaken && nowMin > due + 30;
+    const isNow = !isTaken && !isOverdue && med.id === nextId && nowMin >= due - 30;
+    const isSoon = !isTaken && !isOverdue && !isNow;
+    const status = isTaken ? 'taken' : isOverdue ? 'overdue' : isNow ? 'now' : 'soon';
+
+    let pip;
+    if (isTaken) {
+      pip = `<div class="m-pip taken"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>`;
+    } else if (isOverdue) {
+      pip = `<div class="m-pip overdue">!</div>`;
+    } else if (isNow) {
+      pip = `<div class="m-pip now"><div class="m-pip-dot"></div></div>`;
+    } else {
+      pip = `<div class="m-pip soon"></div>`;
+    }
+
+    const row = document.createElement('div');
+    row.className = 'm-row ' + status;
+    row.innerHTML = `
+      ${pip}
+      <div class="m-body">
+        <div class="m-name">${med.name}</div>
+        <div class="m-time">${dueT}${isTaken ? ' · taken at ' + taken : ''}</div>
+      </div>
+      ${isNow ? '<span class="m-now-badge">NOW</span>' : ''}`;
+    row.onclick = () => { toggleMedDirect(med.id); };
+    wrap.appendChild(row);
+  });
+
+  // Update hidden compat progress nodes
+  if ($('medsTakenN')) {
+    const taken = Object.keys(day.meds||{}).length;
+    const total = state.meds.length;
+    $('medsTakenN').textContent = taken;
+    $('medsTotalN').textContent = total;
+    const bar = $('medsProgressBar');
+    if (bar && bar.firstElementChild) {
+      bar.firstElementChild.style.width = Math.min(100, Math.round(100*taken/total)) + '%';
+    }
+  }
+}
+function toggleMedDirect(id) {
+  const day = ensureDay();
+  if (day.meds[id]) {
+    delete day.meds[id];
+  } else {
+    const now = new Date();
+    day.meds[id] = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  }
+  save();
+  renderMedsListV2();
+  renderMedsHero();
+  renderMedsProgressDashes();
+  renderStatusPill();
+}
+
+// ---------- Override existing render functions ----------
+const _origRenderDashboard = renderDashboard;
+renderDashboard = function() {
+  _origRenderDashboard();           // updates targets, totals, calls renderStreaks
+  renderProteinRing();
+  renderStatBars();
+  renderMealBento();                // overwrites mealsList with bento
+  renderStreakBadgeV2();
+  renderStatusPill();
+};
+
+const _origRenderMeds = renderMeds;
+renderMeds = function() {
+  // Use the v2 layout instead of the old checkbox list
+  renderMedsListV2();
+  renderMedsHero();
+  renderMedsProgressDashes();
+  renderStatusPill();
+};
+
+const _origRenderStreaks = renderStreaks;
+renderStreaks = function() {
+  _origRenderStreaks();             // updates hidden compat numeric nodes
+  renderStreakBadgeV2();
+  renderStatusPill();
+};
+
+// Use _preferredMeal when picking a food
+const _origSuggestMeal = suggestMeal;
+suggestMeal = function() {
+  if (_preferredMeal) {
+    const v = _preferredMeal; _preferredMeal = null; return v;
+  }
+  return _origSuggestMeal();
+};
+
+// switchTab: update the date / page title using the v2 sh-day element
+const _origSwitchTab = switchTab;
+switchTab = function(name) {
+  _origSwitchTab(name);
+  const titleMap = { dashboard: 'Today', meds: 'Meds', history: 'History', settings: 'Settings' };
+  const pt = $('pageTitle');
+  if (pt) {
+    const d = new Date();
+    pt.textContent = (name === 'dashboard')
+      ? d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+      : (titleMap[name] || '');
+  }
+  const tl = $('todayLabel');
+  if (tl) {
+    tl.textContent = (name === 'dashboard')
+      ? new Date().toLocaleDateString(undefined, { weekday: 'long' })
+      : '';
+  }
+  if (name === 'dashboard') {
+    renderProteinRing();
+    renderStatBars();
+    renderMealBento();
+    renderStreakBadgeV2();
+    renderStatusPill();
+  }
+  if (name === 'meds') {
+    renderMedsListV2();
+    renderMedsHero();
+    renderMedsProgressDashes();
+  }
+};
+
+// On boot, set the date label using v2 markup conventions
+(function bootV2(){
+  const tl = $('todayLabel');
+  const pt = $('pageTitle');
+  const d = new Date();
+  if (tl) tl.textContent = d.toLocaleDateString(undefined, { weekday: 'long' });
+  if (pt) pt.textContent = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  // initial render of v2 components
+  renderProteinRing();
+  renderStatBars();
+  renderMealBento();
+  renderStreakBadgeV2();
+  renderStatusPill();
+})();
 </script>
 </body>
 </html>
