@@ -1029,8 +1029,8 @@
     <div class="bento" id="mealsList"></div>
     <span id="mealsCount" hidden></span>
 
-    <!-- Today's entries (expanded view for edit/delete) -->
-    <details class="entries-collapse">
+    <!-- Today's entries (kept for data, hidden in v2 layout) -->
+    <details class="entries-collapse" hidden>
       <summary>All meal entries (today)</summary>
       <div id="todayEntries"></div>
     </details>
@@ -1069,8 +1069,8 @@
       <svg class="sb-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
     </div>
 
-    <!-- Check-in details (energy slider, notes, etc) -->
-    <details class="checkin-details">
+    <!-- Check-in details (kept for data, hidden in v2 layout) -->
+    <details class="checkin-details" hidden>
       <summary>More details (energy, BM, notes)</summary>
       <div class="checkin-inner">
         <label>Energy <span id="energyVal">5</span>/10</label>
@@ -2495,7 +2495,33 @@ function computeStatus() {
 function renderStatusPill() {
   const el = $('statusPill');
   if (!el) return;
-  const { label, kind } = computeStatus();
+  // On the Meds tab the pill carries med-state copy ("X of 6 taken"),
+  // mood-green when all caught up, danger when anything is overdue.
+  const onMeds = !document.getElementById('view-meds').classList.contains('hidden');
+  let label, kind;
+  if (onMeds) {
+    const day = ensureDay();
+    const taken = Object.keys(day.meds || {}).length;
+    const total = state.meds.length;
+    const now = new Date();
+    const nowMin = now.getHours()*60 + now.getMinutes();
+    const wake = wakeMinutes();
+    let overdue = 0;
+    state.meds.forEach(m => {
+      if (day.meds && day.meds[m.id]) return;
+      if (nowMin > wake + m.offset + 30) overdue++;
+    });
+    if (overdue > 0) {
+      label = overdue === 1 ? '1 med overdue' : `${overdue} meds overdue`;
+      kind = 'danger';
+    } else {
+      label = `${taken} of ${total} taken`;
+      kind = 'mood';
+    }
+  } else {
+    const s = computeStatus();
+    label = s.label; kind = s.kind;
+  }
   el.dataset.kind = kind;
   const t = el.querySelector('.sh-pill-text');
   if (t) t.textContent = label;
@@ -2914,32 +2940,24 @@ suggestMeal = function() {
 const _origSwitchTab = switchTab;
 switchTab = function(name) {
   _origSwitchTab(name);
-  const titleMap = { dashboard: 'Today', meds: 'Meds', history: 'History', settings: 'Settings' };
+  // v2: every tab keeps the same Tuesday / May 19 date header
   const pt = $('pageTitle');
-  if (pt) {
-    const d = new Date();
-    pt.textContent = (name === 'dashboard')
-      ? d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-      : (titleMap[name] || '');
-  }
   const tl = $('todayLabel');
-  if (tl) {
-    tl.textContent = (name === 'dashboard')
-      ? new Date().toLocaleDateString(undefined, { weekday: 'long' })
-      : '';
-  }
+  const d = new Date();
+  if (pt) pt.textContent = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  if (tl) tl.textContent = d.toLocaleDateString(undefined, { weekday: 'long' });
   if (name === 'dashboard') {
     renderProteinRing();
     renderStatBars();
     renderMealBento();
     renderStreakBadgeV2();
-    renderStatusPill();
   }
   if (name === 'meds') {
     renderMedsListV2();
     renderMedsHero();
     renderMedsProgressDashes();
   }
+  renderStatusPill();
 };
 
 // On boot, set the date label using v2 markup conventions
