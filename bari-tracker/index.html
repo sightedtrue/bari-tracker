@@ -677,6 +677,214 @@
     transition: width .6s cubic-bezier(.4,0,.2,1);
   }
 
+  /* ===================== Settings (Variant A) ===================== */
+  .settings-profile {
+    margin: 0 16px 14px; padding: 20px 22px;
+    border-radius: 28px;
+    background: var(--c-protein-tint);
+    position: relative; overflow: hidden;
+  }
+  .settings-profile .sp-glow {
+    position: absolute; top: -40px; right: -40px;
+    width: 140px; height: 140px; border-radius: 50%;
+    background: var(--c-protein-glow); filter: blur(50px);
+    pointer-events: none;
+  }
+  .sp-row { position: relative; display: flex; align-items: center; gap: 14px; }
+  .sp-avatar {
+    width: 48px; height: 48px; border-radius: 24px;
+    background: var(--c-protein); color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px var(--c-protein-glow);
+  }
+  .sp-avatar svg { width: 22px; height: 22px; }
+  .sp-name { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+  .sp-sub { font-size: 12px; color: var(--dim); margin-top: 2px; }
+
+  .setting-rows { padding: 0 16px; display: flex; flex-direction: column; gap: 8px; }
+  .set-row {
+    padding: 14px 18px; border-radius: 22px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.05);
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; transition: background .15s ease, transform .1s ease;
+  }
+  .set-row:active { transform: scale(.99); }
+  .set-row:hover { background: rgba(255,255,255,.05); }
+  .sr-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+  .sr-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase;
+  }
+  .sr-value-row { display: flex; align-items: baseline; gap: 6px; margin-top: 2px; }
+  .sr-value-static {
+    font-size: 22px; font-weight: 700; color: var(--text);
+    letter-spacing: -.01em;
+  }
+  .sr-unit { font-size: 13px; color: var(--dim); font-weight: 500; }
+  .sr-input {
+    appearance: none; -webkit-appearance: none;
+    background: transparent; border: none; padding: 0; margin: 0;
+    color: var(--text); font-family: inherit;
+    font-size: 22px; font-weight: 700; letter-spacing: -.01em;
+    outline: none; min-width: 0;
+  }
+  /* Number inputs: size to content; small left padding for visual alignment */
+  input.sr-input[type="number"] {
+    width: 4.2ch;
+    -moz-appearance: textfield;
+  }
+  input.sr-input[type="number"]::-webkit-outer-spin-button,
+  input.sr-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
+  input.sr-input[type="time"] { width: auto; min-width: 96px; }
+  .sr-input:focus { color: var(--c-protein); }
+  .sr-chev { width: 16px; height: 16px; flex: 0 0 16px; color: var(--dim); }
+  .sr-chev-static { color: var(--dim); }
+
+  .adv-toggle {
+    margin: 14px 16px 0; width: calc(100% - 32px);
+    padding: 14px 0; border-radius: 22px;
+    background: rgba(255,255,255,.04);
+    border: 1px dashed rgba(255,255,255,.1);
+    color: var(--dim);
+    font-size: 14px; font-weight: 600; font-family: inherit;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    cursor: pointer; transition: background .15s ease;
+  }
+  .adv-toggle:hover { background: rgba(255,255,255,.07); }
+  .adv-toggle svg { width: 18px; height: 18px; transition: transform .2s ease; }
+  .adv-toggle.open svg { transform: rotate(180deg); }
+
+  .adv-panel {
+    margin: 10px 16px 0; padding: 4px 0;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .adv-card {
+    padding: 16px 18px; border-radius: 22px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.04);
+  }
+  .adv-card-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase;
+  }
+  .adv-card-sub {
+    font-size: 12px; color: var(--dim);
+    margin-top: 4px; line-height: 1.5;
+  }
+  .adv-card input[type="number"],
+  .adv-card input[type="password"],
+  .adv-card input[type="text"] {
+    width: 100%; padding: 10px 12px; border-radius: 14px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.06);
+    color: var(--text); font-size: 14px; font-family: inherit;
+    outline: none; box-sizing: border-box;
+  }
+
+  .data-section { padding: 22px 16px 0; }
+  .ds-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--dimmer); margin-bottom: 10px; padding: 0 4px;
+  }
+  .ds-row { display: flex; gap: 8px; }
+  .ds-btn {
+    flex: 1; padding: 14px 0; border-radius: 18px;
+    background: rgba(125,211,252,.08);
+    border: 1px solid rgba(125,211,252,.18);
+    color: var(--c-water); font-size: 13px; font-weight: 600;
+    font-family: inherit; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background .15s ease;
+  }
+  .ds-btn:hover { background: rgba(125,211,252,.14); }
+  .ds-btn svg { width: 16px; height: 16px; }
+  .ds-row-danger {
+    margin-top: 10px; width: 100%; padding: 12px 0;
+    border-radius: 16px;
+    background: transparent; border: 1px solid rgba(239,68,68,.18);
+    color: var(--danger-soft);
+    font-size: 13px; font-weight: 500; font-family: inherit;
+    cursor: pointer; transition: background .15s ease;
+  }
+  .ds-row-danger:hover { background: rgba(239,68,68,.08); }
+
+  .settings-foot {
+    padding: 28px 20px 8px; text-align: center;
+    font-size: 11px; font-weight: 500; color: var(--dimmer);
+  }
+
+  /* Override the legacy med-edit card styling so it sits inside the new look */
+  #medsTemplate .med-edit {
+    padding: 14px 16px; border-radius: 18px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.04);
+    margin-bottom: 8px;
+  }
+
+  /* ===================== FAB long-press menu ===================== */
+  .fab-menu-backdrop {
+    position: fixed; inset: 0;
+    background: radial-gradient(circle at 88% 88%, rgba(244,114,182,.22), rgba(14,10,26,.78));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 34;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s ease;
+  }
+  .fab-menu-backdrop.open { opacity: 1; pointer-events: auto; }
+  .fab-menu {
+    position: fixed; right: 28px; bottom: 180px;
+    z-index: 36;
+    display: flex; flex-direction: column-reverse; gap: 10px;
+    align-items: flex-end;
+    pointer-events: none;
+  }
+  .fab-menu.open .fm-item { pointer-events: auto; opacity: 1; transform: translateY(0); }
+  .fm-item {
+    display: flex; align-items: center; gap: 10px;
+    opacity: 0; transform: translateY(10px);
+    transition: opacity .18s ease, transform .18s ease;
+    cursor: pointer;
+  }
+  .fab-menu.open .fm-item:nth-child(1) { transition-delay: 0ms; }
+  .fab-menu.open .fm-item:nth-child(2) { transition-delay: 40ms; }
+  .fab-menu.open .fm-item:nth-child(3) { transition-delay: 80ms; }
+  .fab-menu.open .fm-item:nth-child(4) { transition-delay: 120ms; }
+  .fm-label {
+    padding: 7px 13px; border-radius: 999px;
+    background: rgba(26,20,48,.94);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.08);
+    font-size: 12px; font-weight: 600; color: var(--text);
+    white-space: nowrap;
+  }
+  .fm-bubble {
+    width: 48px; height: 48px; border-radius: 24px;
+    color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .1s ease;
+  }
+  .fm-bubble:active { transform: scale(.92); }
+  .fm-bubble svg { width: 20px; height: 20px; }
+  .fm-protein { background: var(--c-protein); box-shadow: 0 8px 24px var(--c-protein-glow); }
+  .fm-water { background: var(--c-water); box-shadow: 0 8px 24px var(--c-water-glow); }
+  .fm-cal { background: var(--c-cal); box-shadow: 0 8px 24px var(--c-cal-glow); }
+  .fm-meds { background: var(--c-meds); box-shadow: 0 8px 24px var(--c-meds-glow); }
+  .fm-hint {
+    position: fixed; right: 28px; bottom: 470px;
+    z-index: 36;
+    font-size: 11px; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--dim);
+    opacity: 0; transition: opacity .25s ease .1s;
+    pointer-events: none;
+  }
+  .fab-menu-backdrop.open ~ .fm-hint { opacity: 1; }
+  .fab.menu-open { transform: scale(.9) rotate(45deg); }
+
   /* ===================== Floating action button ===================== */
   .fab {
     position: fixed; right: 28px; bottom: 108px;
@@ -1173,78 +1381,164 @@
     </div>
   </section>
 
-  <!-- ============ SETTINGS ============ -->
+  <!-- ============ SETTINGS (Variant A — "Just the essentials") ============ -->
   <section id="view-settings" class="hidden">
 
-    <div class="card">
-      <span class="section-title" style="color:var(--c-protein)">Targets &amp; schedule</span>
-
-      <label style="margin-top:12px">Wake-up time</label>
-      <input type="time" id="setWake" />
-
-      <label style="margin-top:12px">Daily protein (grams)</label>
-      <div class="range-row">
-        <input type="number" id="setPmin" placeholder="min" />
-        <span class="range-dash">to</span>
-        <input type="number" id="setPmax" placeholder="max" />
+    <!-- Profile chip -->
+    <div class="settings-profile">
+      <span class="sp-glow"></span>
+      <div class="sp-row">
+        <div class="sp-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+        </div>
+        <div>
+          <div class="sp-name" id="profileName">Hi Lele</div>
+          <div class="sp-sub" id="profileSub">Your private daily log</div>
+        </div>
       </div>
-
-      <label style="margin-top:12px">Daily calories (kcal)</label>
-      <div class="range-row">
-        <input type="number" id="setCmin" placeholder="min" />
-        <span class="range-dash">to</span>
-        <input type="number" id="setCmax" placeholder="max" />
-      </div>
-
-      <label style="margin-top:12px">Daily water (ml)</label>
-      <input type="number" id="setWater" />
-
-      <button class="btn primary full" style="margin-top:14px" onclick="saveSettings()">Save settings</button>
     </div>
 
-    <div class="card">
-      <span class="section-title" style="color:var(--c-meds)">Medications &amp; supplements</span>
-      <div id="medsTemplate" style="margin-top:12px"></div>
-      <button class="btn full" onclick="addMedTemplate()">+ Add medication</button>
-    </div>
-
-    <div class="card">
-      <span class="section-title" style="color:var(--c-cal)">AI photo scan</span>
-      <label style="margin-top:12px">Claude API key</label>
-      <input type="password" id="setApiKey" placeholder="sk-ant-..." autocomplete="off" />
-      <div class="small" style="margin-top:6px">
-        Stored only on this device. Each scan costs ~$0.005 with Claude.
-        <a href="https://console.anthropic.com" target="_blank" style="color:var(--c-protein)">Get a key</a>
+    <!-- Essentials list -->
+    <div class="setting-rows">
+      <div class="set-row" data-key="wake" onclick="document.getElementById('setWake').focus()">
+        <div class="sr-text">
+          <div class="sr-label" style="color:var(--c-cal)">Wake up</div>
+          <input type="time" id="setWake" class="sr-input" onchange="saveSettingsLive()" />
+        </div>
+        <svg class="sr-chev sr-chev-static" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
-      <button class="btn full" style="margin-top:8px" onclick="saveApiKey()">Save key</button>
+
+      <div class="set-row" data-key="protein" onclick="document.getElementById('setProtein').focus()">
+        <div class="sr-text">
+          <div class="sr-label" style="color:var(--c-protein)">Daily protein</div>
+          <div class="sr-value-row">
+            <input type="number" id="setProtein" class="sr-input" min="20" max="300" step="5" onchange="saveSettingsLive()" />
+            <span class="sr-unit">grams</span>
+          </div>
+        </div>
+        <svg class="sr-chev sr-chev-static" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <div class="set-row" data-key="water" onclick="document.getElementById('setWater').focus()">
+        <div class="sr-text">
+          <div class="sr-label" style="color:var(--c-water)">Daily water</div>
+          <div class="sr-value-row">
+            <input type="number" id="setWater" class="sr-input" min="500" max="5000" step="100" onchange="saveSettingsLive()" />
+            <span class="sr-unit">ml</span>
+          </div>
+        </div>
+        <svg class="sr-chev sr-chev-static" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <div class="set-row set-row-meds" data-key="meds" onclick="toggleAdvancedSection('medsAdv')">
+        <div class="sr-text">
+          <div class="sr-label" style="color:var(--c-meds)">Medications</div>
+          <div class="sr-value-row">
+            <span class="sr-value-static"><span id="sumMeds">6</span></span>
+            <span class="sr-unit">scheduled</span>
+          </div>
+        </div>
+        <svg class="sr-chev sr-chev-static" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
     </div>
 
-    <div class="card">
-      <span class="section-title" style="color:var(--c-water)">Data</span>
-      <div class="grid2" style="margin-top:12px">
-        <button class="btn" onclick="exportData()">Export JSON</button>
-        <button class="btn" onclick="document.getElementById('importFile').click()">Import JSON</button>
+    <!-- Meds editor (collapsible inline panel) -->
+    <div id="medsAdv" class="adv-panel hidden">
+      <div id="medsTemplate"></div>
+      <button class="btn full" onclick="addMedTemplate()" style="margin-top:8px">+ Add medication</button>
+    </div>
+
+    <!-- Advanced toggle -->
+    <button class="adv-toggle" id="advToggle" onclick="toggleAdvancedSection('advanced')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      Advanced
+    </button>
+
+    <!-- Advanced panel (calorie range, AI key) -->
+    <div id="advanced" class="adv-panel hidden">
+      <div class="adv-card">
+        <div class="adv-card-label" style="color:var(--c-cal)">Calories</div>
+        <div class="adv-card-sub">Optional minimum and maximum. Leave blank to skip.</div>
+        <div class="range-row" style="margin-top:10px">
+          <input type="number" id="setCmin" placeholder="min" onchange="saveSettingsLive()" />
+          <span class="range-dash">to</span>
+          <input type="number" id="setCmax" placeholder="max" onchange="saveSettingsLive()" />
+        </div>
+      </div>
+
+      <div class="adv-card">
+        <div class="adv-card-label" style="color:var(--c-cal)">AI food scan</div>
+        <div class="adv-card-sub">Add your Claude key to scan meals from photos. Stored on this device only.</div>
+        <input type="password" id="setApiKey" placeholder="sk-ant-…" autocomplete="off" style="margin-top:10px" />
+        <div class="row" style="margin-top:10px; gap:8px">
+          <button class="btn" onclick="saveApiKey()" style="flex:1">Save key</button>
+          <a href="https://console.anthropic.com" target="_blank" class="btn ghost" style="flex:1; text-align:center; text-decoration:none">Get one</a>
+        </div>
+      </div>
+
+      <!-- Legacy hidden compat (min/max protein still stored in state) -->
+      <input type="hidden" id="setPmin" />
+      <input type="hidden" id="setPmax" />
+    </div>
+
+    <!-- Your data -->
+    <div class="data-section">
+      <div class="ds-label">Your data</div>
+      <div class="ds-row">
+        <button class="ds-btn ds-water" onclick="exportData()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Back up
+        </button>
+        <button class="ds-btn ds-water" onclick="document.getElementById('importFile').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Restore
+        </button>
       </div>
       <input type="file" id="importFile" accept="application/json" class="hidden" onchange="importData(event)" />
-      <div class="grid2" style="margin-top:8px">
-        <button class="btn danger" onclick="resetDay()">Reset today</button>
-        <button class="btn danger" onclick="resetAll()">Reset ALL data</button>
-      </div>
+      <button class="ds-row-danger" onclick="resetAll()">
+        Start fresh (erase everything)
+      </button>
     </div>
 
-    <div class="card">
-      <span class="section-title">About</span>
-      <div class="small" style="margin-top:8px">
-        Bari Tracker · personal post-bariatric daily tracker. All data is stored locally on this device.
-      </div>
+    <div class="settings-foot">
+      Bari Tracker · everything stays on this device
     </div>
-
   </section>
 
 </main>
 
+<!-- FAB long-press menu -->
+<div class="fab-menu-backdrop" id="fabMenuBackdrop" onclick="closeFabMenu()"></div>
+<div class="fm-hint" id="fmHint">Quick log</div>
+<div class="fab-menu" id="fabMenu">
+  <div class="fm-item" onclick="fabAction('meds')">
+    <span class="fm-label">Take a med</span>
+    <span class="fm-bubble fm-meds">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="20" height="6" rx="3"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
+    </span>
+  </div>
+  <div class="fm-item" onclick="fabAction('snap')">
+    <span class="fm-label">Snap a meal</span>
+    <span class="fm-bubble fm-cal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    </span>
+  </div>
+  <div class="fm-item" onclick="fabAction('water')">
+    <span class="fm-label">+250 ml water</span>
+    <span class="fm-bubble fm-water">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.7c-3 4-7 8-7 12a7 7 0 0 0 14 0c0-4-4-8-7-12z"/></svg>
+    </span>
+  </div>
+  <div class="fm-item" onclick="fabAction('protein')">
+    <span class="fm-label">Protein shake</span>
+    <span class="fm-bubble fm-protein">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M6 4h7a4 4 0 0 1 0 8H6M6 12h8a4 4 0 0 1 0 8H6"/></svg>
+    </span>
+  </div>
+</div>
+
 <!-- FAB -->
-<button class="fab" onclick="openFoodModal()" aria-label="Add food">
+<button class="fab" id="fabMain" onclick="fabTap()" aria-label="Add food">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
 </button>
 
@@ -1347,15 +1641,15 @@
 <!-- ============ Onboarding ============ -->
 <div class="modal-bg" id="onboardBg">
   <div class="modal" style="padding-top:18px">
-    <h3>Welcome, Lele</h3>
-    <p class="small">Bari Tracker is a private daily log for your post-bypass routine. Everything stays on this device.</p>
-    <ul class="small">
-      <li><strong>Today</strong> — log foods &amp; water, track progress, quick check-in.</li>
-      <li><strong>Meds</strong> — daily checklist with the most urgent dose surfaced first.</li>
-      <li><strong>History</strong> — calendar of past days, weekly summary, trends.</li>
-      <li><strong>Settings</strong> — wake-up time, targets, meds, AI photo scan, export/import.</li>
+    <h3>Welcome 👋</h3>
+    <p class="small" style="line-height:1.6">A simple daily log for life after bariatric surgery. Everything stays on your phone — no cloud, no account.</p>
+    <ul class="small" style="line-height:1.7; padding-left:18px">
+      <li><strong>Today</strong> — log food and water, check in on how you feel.</li>
+      <li><strong>Meds</strong> — today's checklist, with the next dose front and center.</li>
+      <li><strong>History</strong> — look back at past days and patterns.</li>
+      <li><strong>Settings</strong> — your goals, your meds, your data.</li>
     </ul>
-    <p class="small">Add to your iPhone home screen via Share → "Add to Home Screen" for an app-like experience.</p>
+    <p class="small" style="margin-top:14px">Tip — add to your home screen via Share → "Add to Home Screen" for a real app feel.</p>
     <button class="btn primary full" onclick="closeOnboard()">Let's go</button>
   </div>
 </div>
@@ -1940,26 +2234,51 @@ async function doScan(hint) {
   setScanStatus(hint ? 'Re-analyzing with your description…' : 'Analyzing photo…', false, true);
 
   const hintBlock = hint
-    ? `\n\nThe person ate this and described it as: "${hint}"\nTrust this description for identity, ingredients, and quantity — the photo may not show everything (e.g. hidden cheese, oil, number of items). Use the photo mainly to estimate portion size.`
+    ? `\n\nUSER DESCRIPTION (authoritative — overrides what the photo seems to show): "${hint}"\nThe photo may hide ingredients (cheese melted in, oil/butter used to cook, sauces, sugar) or obscure the count. Trust the description for identity, ingredient list, and quantity/count. Use the photo mainly to confirm and gauge portion size.`
     : '';
 
-  const prompt = `You are a nutrition expert. Analyze this meal. Respond with ONLY a JSON object, no markdown, no prose.
+  const prompt = `You are a meticulous clinical dietitian estimating nutrition from a meal photo for a post-bariatric (gastric bypass) patient who eats small portions. Accuracy matters more than speed. Be realistic, never optimistic — under-counting calories actively harms this user's goals.
 
-Format:
+REASON STEP BY STEP INTERNALLY (do not print your reasoning), then output ONLY the final JSON object — no markdown fences, no commentary.
+
+STEP 1 — Inventory. List every distinct component: protein, starch, vegetable, fruit, dairy/cheese, sauce/dressing, cooking oil or butter, bread/breading, drink, condiments. Actively hunt for the easy-to-miss calorie bombs:
+  • cooking oil / butter on pan-fried, sautéed, roasted, or restaurant food (~90 kcal per tablespoon — assume 1-2 tbsp unless it's clearly steamed/boiled/grilled-dry)
+  • melted or shredded cheese, cream, mayo, dressings, gravy, sugar/syrup, breading/batter
+  • If the food looks glossy, fried, or restaurant-plated, ADD fat — restaurants use far more oil/butter than home cooks.
+
+STEP 2 — Portion each component in grams using size anchors and the photo's scale cues (fork ≈ 19 cm, dinner plate ≈ 27 cm, hand, can):
+  • meat/fish palm or deck of cards ≈ 85-110 g
+  • cooked rice/pasta/veg closed fist ≈ 150 g
+  • nuts/dry cupped hand ≈ 40 g
+  • oil/butter: thumb tip ≈ 5 g, whole thumb ≈ 15 g
+  • 1 large egg ≈ 50 g, 1 slice bread ≈ 30 g, 1 tbsp sauce ≈ 15 g
+  Bariatric portions are usually SMALLER than a restaurant serving — don't inflate the solids. But DO fully count fats/sauces.
+  If the USER DESCRIPTION gives a count or weight (e.g. "4 eggs", "200 g chicken"), trust it and compute from standard weights even if the photo seems to show less.
+
+STEP 3 — For each component, use realistic macros and compute its kcal/protein/carbs/fat/fiber, then SUM all components into whole-meal totals.
+
+STEP 4 — Convert to per-100g: divide each total by (total_grams / 100). "estimated_grams" = total weight of the whole meal.
+
+WORKED EXAMPLE (illustrative — do not copy these values):
+Photo: grilled steak + parmigiana di melanzane.
+- Steak ~120 g → 250 kcal, P31, C0, F14
+- Parmigiana ~180 g (eggplant, tomato, mozzarella, parmesan, ~1.5 tbsp oil) → 320 kcal, P14, C16, F23
+- Totals: 300 g, 570 kcal, P45, C16, F37, Fi5
+- per_100g = {kcal:190, p:15, c:5.3, f:12.3, fi:1.7}, estimated_grams:300, confidence:"medium"
+
+OUTPUT SCHEMA (exact keys, numbers only):
 {
-  "name": "concise food name",
-  "estimated_grams": 150,
-  "per_100g": { "kcal": 165, "p": 31, "c": 0, "f": 3.6, "fi": 0 },
+  "name": "short but specific; list main components, e.g. 'Grilled steak + parmigiana di melanzane'",
+  "estimated_grams": 0,
+  "per_100g": { "kcal": 0, "p": 0, "c": 0, "f": 0, "fi": 0 },
   "confidence": "high|medium|low"
 }
 
-Rules:
-- For mixed plates / multi-component meals (e.g. steak with parmigiana di melanzane), name all major components and estimate combined macros per 100g of the whole meal.
-- Account for cooking fats, sauces, cheese, and breading even if not clearly visible — use the description when given.
-- Estimate the TOTAL visible portion in grams using plate, hand, or utensil size cues. For multiple items (e.g. "4 eggs"), sum them.
-- Macros are PER 100g of the food, not for the whole portion. "p" = protein, "c" = carbs, "f" = fat, "fi" = fiber, all grams; "kcal" = calories.
-- Set confidence "high" only when the description or image makes identity and portion clear.
-- If you truly cannot identify any food, return: {"error": "<short reason>"}${hintBlock}`;
+RULES:
+- per_100g is PER 100 g of the WHOLE meal, not the full portion. p=protein, c=carbs, f=fat, fi=fiber (grams); kcal=calories.
+- Self-check before output: per_100g kcal must ≈ 4·p + 4·c + 9·f (within ~10%). If it doesn't, fix the numbers.
+- confidence: "high" = clear identity AND portion (or a precise description); "medium" = portion inferred; "low" = obscured/ambiguous.
+- If you truly cannot identify any food, return exactly: {"error":"<short reason>"}${hintBlock}`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -1972,7 +2291,7 @@ Rules:
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
-        max_tokens: 500,
+        max_tokens: 700,
         messages: [{
           role: 'user',
           content: [
@@ -2320,23 +2639,52 @@ function renderTrends() {
 function loadSettingsForm() {
   const s = state.settings;
   $('setWake').value = s.wake;
-  $('setPmin').value = s.proteinMin;
-  $('setPmax').value = s.proteinMax;
+  // Single-number protein input — use max as the goal, min auto-tracks at 75%
+  if ($('setProtein')) $('setProtein').value = s.proteinMax;
+  if ($('setPmin')) $('setPmin').value = s.proteinMin;
+  if ($('setPmax')) $('setPmax').value = s.proteinMax;
   $('setWater').value = s.waterTarget;
   $('setCmin').value = s.calMin;
   $('setCmax').value = s.calMax;
   if ($('setApiKey')) $('setApiKey').value = s.anthropicKey || '';
+  refreshSettingsSummary();
+}
+function refreshSettingsSummary() {
+  const s = state.settings;
+  const fmt = (n) => Number(n).toLocaleString();
+  if ($('sumWake')) $('sumWake').textContent = s.wake;
+  if ($('sumProtein')) $('sumProtein').textContent = fmt(s.proteinMax);
+  if ($('sumWater')) $('sumWater').textContent = fmt(s.waterTarget);
+  if ($('sumMeds')) $('sumMeds').textContent = state.meds.length;
 }
 function saveSettings() {
   const s = state.settings;
   s.wake = $('setWake').value || s.wake;
-  s.proteinMin = +$('setPmin').value || s.proteinMin;
-  s.proteinMax = +$('setPmax').value || s.proteinMax;
+  // Variant A: single protein input drives the goal; min auto-derived at 75% so existing logic still works
+  const protein = +($('setProtein') && $('setProtein').value) || +$('setPmax').value || s.proteinMax;
+  s.proteinMax = protein;
+  s.proteinMin = Math.max(20, Math.round(protein * 0.75));
+  if ($('setPmin')) $('setPmin').value = s.proteinMin;
+  if ($('setPmax')) $('setPmax').value = s.proteinMax;
   s.waterTarget = +$('setWater').value || s.waterTarget;
   s.calMin = +$('setCmin').value || s.calMin;
   s.calMax = +$('setCmax').value || s.calMax;
   save(); renderDashboard(); renderSchedule(); renderMeds();
-  toast("Settings saved");
+  refreshSettingsSummary();
+  toast("Saved");
+}
+function saveSettingsLive() {
+  // Auto-save on field blur — no "Save" button needed.
+  saveSettings();
+}
+function toggleAdvancedSection(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle('hidden');
+  if (id === 'advanced') {
+    const t = document.getElementById('advToggle');
+    if (t) t.classList.toggle('open');
+  }
 }
 function renderMedsTemplate() {
   const wrap = $('medsTemplate'); wrap.innerHTML='';
@@ -2960,6 +3308,70 @@ switchTab = function(name) {
   renderStatusPill();
 };
 
+// ---------- FAB tap / long-press menu ----------
+let _fabPressTimer = null;
+let _fabLongPressed = false;
+function fabTap() {
+  // If long-press already fired, ignore this tap (button up after hold)
+  if (_fabLongPressed) { _fabLongPressed = false; return; }
+  openFoodModal();
+}
+function openFabMenu() {
+  _fabLongPressed = true;
+  document.getElementById('fabMenu').classList.add('open');
+  document.getElementById('fabMenuBackdrop').classList.add('open');
+  document.getElementById('fabMain').classList.add('menu-open');
+  if (navigator.vibrate) navigator.vibrate(8);
+}
+function closeFabMenu() {
+  document.getElementById('fabMenu').classList.remove('open');
+  document.getElementById('fabMenuBackdrop').classList.remove('open');
+  document.getElementById('fabMain').classList.remove('menu-open');
+}
+function fabAction(kind) {
+  closeFabMenu();
+  // small delay so the menu fade-out feels intentional
+  setTimeout(() => {
+    if (kind === 'water') {
+      addWater(250);
+    } else if (kind === 'protein') {
+      // Quick-log a whey protein shake (24g protein, 120 kcal per scoop)
+      const food = FOOD_DB.find(f => /whey/i.test(f.n));
+      if (food) {
+        const day = ensureDay();
+        day.foods.push({ name: food.n, grams: 200, kcal: food.kcal*2, p: food.p*2, c: food.c*2, f: food.f*2, fi: food.fi*2, t: Date.now(), slot: 'snack' });
+        save(); renderDashboard(); toast('Protein shake logged');
+      } else {
+        openFoodModal();
+      }
+    } else if (kind === 'snap') {
+      document.getElementById('foodPhoto') && document.getElementById('foodPhoto').click();
+    } else if (kind === 'meds') {
+      const next = nextDueMed && nextDueMed();
+      if (next && next.med) {
+        toggleMedDirect(next.med.id);
+      } else {
+        switchTab('meds');
+      }
+    }
+  }, 120);
+}
+(function wireFabLongPress(){
+  const fab = document.getElementById('fabMain');
+  if (!fab) return;
+  const start = (e) => {
+    _fabLongPressed = false;
+    _fabPressTimer = setTimeout(openFabMenu, 400);
+  };
+  const cancel = () => {
+    if (_fabPressTimer) { clearTimeout(_fabPressTimer); _fabPressTimer = null; }
+  };
+  fab.addEventListener('pointerdown', start);
+  fab.addEventListener('pointerup', cancel);
+  fab.addEventListener('pointerleave', cancel);
+  fab.addEventListener('pointercancel', cancel);
+})();
+
 // On boot, set the date label using v2 markup conventions
 (function bootV2(){
   const tl = $('todayLabel');
@@ -2973,6 +3385,7 @@ switchTab = function(name) {
   renderMealBento();
   renderStreakBadgeV2();
   renderStatusPill();
+  if (typeof refreshSettingsSummary === 'function') refreshSettingsSummary();
 })();
 </script>
 </body>
